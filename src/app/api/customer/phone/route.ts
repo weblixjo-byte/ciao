@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
     if (!userId) {
       return NextResponse.json(
-        { error: "يرجى تسجيل الدخول أولاً لتحديث رقم الهاتف" },
+        { error: "Please sign in first to update your phone number" },
         { status: 401 }
       );
     }
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
     if (!phone || typeof phone !== "string") {
       return NextResponse.json(
-        { error: "رقم الهاتف مطلوب" },
+        { error: "Phone number is required" },
         { status: 400 }
       );
     }
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           error:
-            "رقم الهاتف غير صالح. يجب أن يتكون من 10 أرقام ويبدأ بـ 079 أو 078 أو 077",
+            "Invalid phone number. Must be 10 digits starting with 079, 078, or 077",
         },
         { status: 400 }
       );
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     const existing = await dbService.findUserByPhone(cleanPhone);
     if (existing && String(existing._id) !== String(userId)) {
       return NextResponse.json(
-        { error: "هذا الرقم مسجل مسبقاً بحساب عميل آخر" },
+        { error: "This phone number is already registered to another member" },
         { status: 400 }
       );
     }
@@ -60,32 +60,20 @@ export async function POST(req: Request) {
     const updated = await dbService.updateUser(userId, { phone: cleanPhone });
     if (!updated) {
       return NextResponse.json(
-        { error: "لم يتم العثور على حساب العميل" },
+        { error: "Customer account not found" },
         { status: 404 }
       );
-    }
-
-    // Create an in-app confirmation notification
-    try {
-      await dbService.createNotification({
-        customerId: userId,
-        title: "تم ربط رقم الهاتف بنجاح",
-        message: `تم ربط رقم هاتفك (${cleanPhone}) ببطاقة الولاء بنجاح. يمكنك الآن مشاركته مع الكاشير لجمع النقاط.`,
-        type: "SYSTEM",
-      });
-    } catch {
-      // Non-critical notification failure ignored
     }
 
     return NextResponse.json({
       success: true,
       phone: cleanPhone,
-      message: "تم حفظ رقم الهاتف وربطه بالحساب بنجاح",
+      message: "Phone number linked successfully",
     });
   } catch (error: any) {
     console.error("Save phone error:", error);
     return NextResponse.json(
-      { error: error.message || "حدث خطأ أثناء حفظ رقم الهاتف" },
+      { error: error.message || "An error occurred while saving phone number" },
       { status: 500 }
     );
   }

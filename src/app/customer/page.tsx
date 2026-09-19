@@ -241,19 +241,19 @@ export default function CustomerPage() {
 
     const clean = phoneNumber.trim();
     if (!clean) {
-      setPhoneError("يرجى إدخال رقم هاتفك");
+      setPhoneError("Please enter your mobile phone number");
       return;
     }
 
     if (clean.length !== 10 || !/^07[789]\d{7}$/.test(clean)) {
       if (!clean.startsWith("07")) {
-        setPhoneError("يجب أن يبدأ رقم الهاتف بـ 07");
+        setPhoneError("Phone number must start with 07");
       } else if (!/^07[789]/.test(clean)) {
-        setPhoneError("يجب أن يبدأ الرقم بـ 079 أو 078 أو 077");
+        setPhoneError("Phone number must start with 079, 078, or 077");
       } else if (clean.length !== 10) {
-        setPhoneError(`يجب أن يتكون الرقم من 10 أرقام (أدخلت ${clean.length} أرقام)`);
+        setPhoneError(`Phone number must be 10 digits (entered ${clean.length})`);
       } else {
-        setPhoneError("رقم الهاتف غير صالح، يرجى التأكد من الرقم");
+        setPhoneError("Invalid phone number format, please check and try again");
       }
       return;
     }
@@ -281,13 +281,13 @@ export default function CustomerPage() {
           localStorage.setItem(CUSTOMER_CACHE_KEY, JSON.stringify(updatedCustomer));
         }
         confetti({ particleCount: 75, spread: 70, origin: { y: 0.6 } });
-        setPushSuccessToast("تم ربط رقم هاتفك بنجاح!");
+        setPushSuccessToast("Phone number linked successfully!");
         setTimeout(() => setPushSuccessToast(null), 5000);
       } else {
-        setPhoneError(data.error || "تعذر حفظ رقم الهاتف، يرجى المحاولة ثانية");
+        setPhoneError(data.error || "Unable to save phone number. Please try again.");
       }
     } catch (err: any) {
-      setPhoneError(err.message || "حدث خطأ في الاتصال، يرجى المحاولة ثانية");
+      setPhoneError(err.message || "Connection error. Please try again.");
     } finally {
       setPhoneSubmitting(false);
     }
@@ -1698,10 +1698,10 @@ export default function CustomerPage() {
 
             {/* Title & Greeting */}
             <h2 className="text-lg font-bold font-sans text-neutral-900 mb-1">
-              إضافة رقم الهاتف
+              Link Your Mobile Number
             </h2>
             <p className="text-xs text-neutral-500 font-sans leading-relaxed max-w-xs mx-auto">
-              أهلاً بك <strong className="text-neutral-800">{customer.name}</strong>! يرجى إدخال رقم هاتفك لربطه ببطاقة الولاء وتفعيلها فوراً.
+              Welcome <strong className="text-neutral-800">{customer.name}</strong>! Please enter your 10-digit mobile number to activate your digital loyalty pass.
             </p>
 
             {/* Allowed Prefixes Chips */}
@@ -1774,14 +1774,14 @@ export default function CustomerPage() {
                   <span className="text-neutral-500">
                     {phoneNumber.length === 10 && /^07[789]\d{7}$/.test(phoneNumber) ? (
                       <span className="text-emerald-700 font-semibold flex items-center gap-1">
-                        <Check className="w-3 h-3" /> رقم مكتمل وصحيح
+                        <Check className="w-3 h-3" /> Valid 10-digit number
                       </span>
                     ) : phoneNumber.length > 0 && !phoneNumber.startsWith("07") ? (
-                      <span className="text-amber-600 font-medium">يجب أن يبدأ بـ 07</span>
+                      <span className="text-amber-600 font-medium">Must start with 07</span>
                     ) : phoneNumber.length >= 3 && !/^07[789]/.test(phoneNumber) ? (
-                      <span className="text-amber-600 font-medium">يجب أن يبدأ بـ 079 أو 078 أو 077</span>
+                      <span className="text-amber-600 font-medium">Must start with 079, 078, or 077</span>
                     ) : (
-                      <span className="text-neutral-400">10 أرقام (مثال: 0791234567)</span>
+                      <span className="text-neutral-400">10 digits (e.g. 0791234567)</span>
                     )}
                   </span>
                   <span
@@ -1809,19 +1809,19 @@ export default function CustomerPage() {
                 {phoneSubmitting ? (
                   <>
                     <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                    <span>جاري الحفظ والربط...</span>
+                    <span>Saving & Linking...</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    <span>تأكيد وحفظ رقم الهاتف</span>
+                    <span>Confirm & Link Phone Number</span>
                   </>
                 )}
               </button>
 
               <div className="pt-2 border-t border-neutral-100/80 flex items-center justify-center gap-1.5 text-[11px] text-neutral-400 font-sans text-center">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#36543D] shrink-0" />
-                <span>يتم ربط الرقم بحسابك بأمان وبدون أي رسائل تأكيد</span>
+                <span>Your phone number is securely linked to your pass without SMS codes</span>
               </div>
             </form>
           </div>
