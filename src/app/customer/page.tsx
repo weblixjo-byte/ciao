@@ -19,6 +19,8 @@ import {
   AlertCircle,
   CheckCircle2,
   CheckCheck,
+  Smartphone,
+  Phone,
 } from "lucide-react";
 
 // Official Google Multi-Color Icon
@@ -135,17 +137,25 @@ export default function CustomerPage() {
 
         // Instant pass construction if arriving from OAuth redirect
         if (userId && name) {
+          const safeDec = (val: string | null) => {
+            if (!val) return undefined;
+            try {
+              return decodeURIComponent(val);
+            } catch {
+              return val;
+            }
+          };
           const rawPin = params.get("pin") || "000000";
           const formattedPin = `${rawPin.slice(0, 3)} - ${rawPin.slice(3, 6)}`;
           const initialUser: CustomerData = {
             id: userId,
-            name: decodeURIComponent(name),
-            email: params.get("email") ? decodeURIComponent(params.get("email")!) : undefined,
-            avatarUrl: params.get("avatar") ? decodeURIComponent(params.get("avatar")!) : undefined,
-            phone: params.get("phone") ? decodeURIComponent(params.get("phone")!) : undefined,
+            name: safeDec(name) || "Member",
+            email: safeDec(params.get("email")),
+            avatarUrl: safeDec(params.get("avatar")),
+            phone: safeDec(params.get("phone")),
             rawPin,
             formattedPin,
-            qrSecret: params.get("qr") ? decodeURIComponent(params.get("qr")!) : userId,
+            qrSecret: safeDec(params.get("qr")) || userId,
             pointsBalance: Number(params.get("points") || 0),
             lifetimePoints: Number(params.get("points") || 0),
             tier: ((params.get("tier") as any) || "Member") as "Member" | "Silver" | "Gold",
@@ -202,6 +212,86 @@ export default function CustomerPage() {
   // Custom Google Signup Form State (for signing up with any new Google email)
   const [customName, setCustomName] = useState("");
   const [customEmail, setCustomEmail] = useState("");
+
+  // Mandatory Phone Number Onboarding State
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneSubmitting, setPhoneSubmitting] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+
+  const handlePhoneChange = (val: string) => {
+    let cleaned = val.replace(/[^\d+]/g, "");
+    if (cleaned.startsWith("+962")) {
+      cleaned = "0" + cleaned.slice(4);
+    } else if (cleaned.startsWith("00962")) {
+      cleaned = "0" + cleaned.slice(5);
+    } else if (cleaned.startsWith("962")) {
+      cleaned = "0" + cleaned.slice(3);
+    }
+    cleaned = cleaned.replace(/\D/g, "");
+    if (cleaned.length > 10) {
+      cleaned = cleaned.slice(0, 10);
+    }
+    setPhoneNumber(cleaned);
+    setPhoneError(null);
+  };
+
+  const handleSavePhone = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setPhoneError(null);
+
+    const clean = phoneNumber.trim();
+    if (!clean) {
+      setPhoneError("يرجى إدخال رقم هاتفك");
+      return;
+    }
+
+    if (clean.length !== 10 || !/^07[789]\d{7}$/.test(clean)) {
+      if (!clean.startsWith("07")) {
+        setPhoneError("يجب أن يبدأ رقم الهاتف بـ 07");
+      } else if (!/^07[789]/.test(clean)) {
+        setPhoneError("يجب أن يبدأ الرقم بـ 079 أو 078 أو 077");
+      } else if (clean.length !== 10) {
+        setPhoneError(`يجب أن يتكون الرقم من 10 أرقام (أدخلت ${clean.length} أرقام)`);
+      } else {
+        setPhoneError("رقم الهاتف غير صالح، يرجى التأكد من الرقم");
+      }
+      return;
+    }
+
+    setPhoneSubmitting(true);
+    try {
+      const headers = getAuthHeaders();
+      headers["Content-Type"] = "application/json";
+
+      const res = await fetch("/api/customer/phone", {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: JSON.stringify({ phone: clean }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        const updatedCustomer: CustomerData = {
+          ...customer!,
+          phone: clean,
+        };
+        setCustomer(updatedCustomer);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(CUSTOMER_CACHE_KEY, JSON.stringify(updatedCustomer));
+        }
+        confetti({ particleCount: 75, spread: 70, origin: { y: 0.6 } });
+        setPushSuccessToast("تم ربط رقم هاتفك بنجاح!");
+        setTimeout(() => setPushSuccessToast(null), 5000);
+      } else {
+        setPhoneError(data.error || "تعذر حفظ رقم الهاتف، يرجى المحاولة ثانية");
+      }
+    } catch (err: any) {
+      setPhoneError(err.message || "حدث خطأ في الاتصال، يرجى المحاولة ثانية");
+    } finally {
+      setPhoneSubmitting(false);
+    }
+  };
 
   // Redemption state
   const [redeemingReward, setRedeemingReward] = useState<RewardItem | null>(null);
@@ -985,11 +1075,23 @@ export default function CustomerPage() {
                   <h2 className="text-xl font-bold text-neutral-900 font-sans">
                     {customer.name}
                   </h2>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <GoogleIcon className="w-3.5 h-3.5" />
-                    <span className="text-xs text-neutral-500 font-sans">
-                      {customer.email || customer.phone || "Google Member"}
-                    </span>
+                  <div className="flex flex-col gap-0.5 mt-1">
+                    {customer.email && (
+                      <div className="flex items-center gap-1.5">
+                        <GoogleIcon className="w-3.5 h-3.5 shrink-0" />
+                        <span className="text-xs text-neutral-500 font-sans truncate max-w-[200px]">
+                          {customer.email}
+                        </span>
+                      </div>
+                    )}
+                    {customer.phone && (
+                      <div className="flex items-center gap-1.5">
+                        <Smartphone className="w-3.5 h-3.5 text-[#36543D] shrink-0" />
+                        <span className="text-xs font-semibold text-[#36543D] font-mono tracking-wide">
+                          {customer.phone}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1572,6 +1674,156 @@ export default function CustomerPage() {
             >
               Got it, thanks
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Mandatory Phone Number Onboarding (No skip, 10 digits starting with 079, 078, 077) */}
+      {customer && (!customer.phone || customer.phone.trim() === "" || customer.phone === "undefined") && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 select-none">
+          <div className="glass-panel rounded-3xl p-7 max-w-sm w-full shadow-2xl border border-white/60 text-center relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Ambient Italian green background glow */}
+            <div className="absolute -top-16 -right-16 w-36 h-36 bg-[#36543D]/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-[#D4E2D4]/40 rounded-full blur-2xl pointer-events-none" />
+
+            {/* Icon & Flag Badge */}
+            <div className="relative mx-auto w-16 h-16 mb-4 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#36543D] to-[#243B2B] text-white flex items-center justify-center shadow-lg shadow-[#36543D]/25">
+                <Smartphone className="w-8 h-8 text-white" />
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-xs shadow-xs">
+                🇯🇴
+              </div>
+            </div>
+
+            {/* Title & Greeting */}
+            <h2 className="text-lg font-bold font-sans text-neutral-900 mb-1">
+              إضافة رقم الهاتف
+            </h2>
+            <p className="text-xs text-neutral-500 font-sans leading-relaxed max-w-xs mx-auto">
+              أهلاً بك <strong className="text-neutral-800">{customer.name}</strong>! يرجى إدخال رقم هاتفك لربطه ببطاقة الولاء وتفعيلها فوراً.
+            </p>
+
+            {/* Allowed Prefixes Chips */}
+            <div className="flex items-center justify-center gap-2 my-3.5">
+              <div className="px-2.5 py-1 rounded-xl bg-neutral-100/90 border border-neutral-200/80 text-[11px] font-mono font-bold text-neutral-700 flex items-center gap-1 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                079
+              </div>
+              <div className="px-2.5 py-1 rounded-xl bg-neutral-100/90 border border-neutral-200/80 text-[11px] font-mono font-bold text-neutral-700 flex items-center gap-1 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                078
+              </div>
+              <div className="px-2.5 py-1 rounded-xl bg-neutral-100/90 border border-neutral-200/80 text-[11px] font-mono font-bold text-neutral-700 flex items-center gap-1 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                077
+              </div>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSavePhone} className="space-y-3.5 text-start">
+              <div>
+                <div
+                  className={`flex items-center rounded-2xl bg-white border-2 transition-all shadow-inner px-3 py-2.5 ${
+                    phoneError
+                      ? "border-rose-400 ring-3 ring-rose-50"
+                      : phoneNumber.length === 10 && /^07[789]\d{7}$/.test(phoneNumber)
+                      ? "border-emerald-500 ring-3 ring-emerald-50"
+                      : "border-neutral-200 focus-within:border-[#36543D] focus-within:ring-3 focus-within:ring-[#36543D]/10"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 pl-1 pr-3 border-r border-neutral-200 text-neutral-600 select-none">
+                    <span className="text-sm">🇯🇴</span>
+                    <span className="font-mono text-xs font-bold text-neutral-800">+962</span>
+                  </div>
+
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    dir="ltr"
+                    value={phoneNumber}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="07XXXXXXXX"
+                    className="w-full bg-transparent text-center font-mono text-xl tracking-wider font-bold text-neutral-900 outline-hidden py-1 placeholder:text-neutral-300 placeholder:font-mono placeholder:tracking-normal placeholder:text-base placeholder:font-normal"
+                    autoFocus
+                    maxLength={10}
+                  />
+
+                  <div className="w-6 flex items-center justify-center shrink-0">
+                    {phoneNumber.length === 10 && /^07[789]\d{7}$/.test(phoneNumber) ? (
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 animate-in zoom-in" />
+                    ) : phoneNumber.length > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPhoneNumber("");
+                          setPhoneError(null);
+                        }}
+                        className="p-1 rounded-full text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer"
+                        title="Clear"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+
+                {/* Digits Counter & Helper */}
+                <div className="flex items-center justify-between mt-2 px-1 text-[11px] font-sans">
+                  <span className="text-neutral-500">
+                    {phoneNumber.length === 10 && /^07[789]\d{7}$/.test(phoneNumber) ? (
+                      <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                        <Check className="w-3 h-3" /> رقم مكتمل وصحيح
+                      </span>
+                    ) : phoneNumber.length > 0 && !phoneNumber.startsWith("07") ? (
+                      <span className="text-amber-600 font-medium">يجب أن يبدأ بـ 07</span>
+                    ) : phoneNumber.length >= 3 && !/^07[789]/.test(phoneNumber) ? (
+                      <span className="text-amber-600 font-medium">يجب أن يبدأ بـ 079 أو 078 أو 077</span>
+                    ) : (
+                      <span className="text-neutral-400">10 أرقام (مثال: 0791234567)</span>
+                    )}
+                  </span>
+                  <span
+                    className={`font-mono font-bold ${
+                      phoneNumber.length === 10 ? "text-emerald-600" : "text-neutral-400"
+                    }`}
+                  >
+                    {phoneNumber.length}/10
+                  </span>
+                </div>
+              </div>
+
+              {phoneError && (
+                <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-center gap-2 text-start font-sans">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                  <span className="leading-snug">{phoneError}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={phoneSubmitting || phoneNumber.length !== 10 || !/^07[789]\d{7}$/.test(phoneNumber)}
+                className="w-full py-3.5 px-4 rounded-2xl bg-[#36543D] hover:bg-[#2A4330] active:scale-98 text-white text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-[#36543D]/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer font-sans"
+              >
+                {phoneSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                    <span>جاري الحفظ والربط...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    <span>تأكيد وحفظ رقم الهاتف</span>
+                  </>
+                )}
+              </button>
+
+              <div className="pt-2 border-t border-neutral-100/80 flex items-center justify-center gap-1.5 text-[11px] text-neutral-400 font-sans text-center">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#36543D] shrink-0" />
+                <span>يتم ربط الرقم بحسابك بأمان وبدون أي رسائل تأكيد</span>
+              </div>
+            </form>
           </div>
         </div>
       )}

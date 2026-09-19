@@ -142,14 +142,14 @@ export async function GET(req: Request) {
     const targetUrl = new URL(`${origin}/customer`);
     targetUrl.searchParams.set("auth_token", token);
     targetUrl.searchParams.set("user_id", String(user._id));
-    targetUrl.searchParams.set("name", encodeURIComponent(user.name || "Member"));
-    if (user.email) targetUrl.searchParams.set("email", encodeURIComponent(user.email));
-    if (user.phone) targetUrl.searchParams.set("phone", encodeURIComponent(user.phone));
+    targetUrl.searchParams.set("name", user.name || "Member");
+    if (user.email) targetUrl.searchParams.set("email", user.email);
+    if (user.phone) targetUrl.searchParams.set("phone", user.phone);
     if (user.pin) targetUrl.searchParams.set("pin", user.pin);
-    if (user.qrSecret) targetUrl.searchParams.set("qr", encodeURIComponent(user.qrSecret));
+    if (user.qrSecret) targetUrl.searchParams.set("qr", user.qrSecret);
     targetUrl.searchParams.set("points", String(user.pointsBalance ?? 0));
-    targetUrl.searchParams.set("tier", encodeURIComponent(user.tier || "Bronze"));
-    if (user.avatarUrl) targetUrl.searchParams.set("avatar", encodeURIComponent(user.avatarUrl));
+    targetUrl.searchParams.set("tier", user.tier || "Bronze");
+    if (user.avatarUrl) targetUrl.searchParams.set("avatar", user.avatarUrl);
 
     const redirectResponse = NextResponse.redirect(targetUrl.toString());
     redirectResponse.cookies.set({
