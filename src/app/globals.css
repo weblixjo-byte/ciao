@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #FAFBFA;
+  --foreground: #141f16;
+  --brand-primary: #FAFBFA;
+  --brand-primary-dark: #1b2e1e;
+  --brand-primary-light: #ffffff;
+  --brand-accent: #426E49;
+  --brand-accent-hover: #35593b;
+  --brand-cream: #FAFBFA;
+  --brand-cream-light: #ffffff;
+  --brand-terracotta: #426E49;
+  --brand-border: #dce5dd;
+}
+
+body {
+  background-color: #FAFBFA;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(66, 110, 73, 0.04) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(66, 110, 73, 0.05) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(66, 110, 73, 0.03) 0px, transparent 50%);
+  background-attachment: fixed;
+  color: #141f16;
+  font-family: var(--font-ibm-plex-arabic), 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Modern clean typography with IBM Plex Sans Arabic */
+h1, h2, h3, h4, h5, h6, .font-brand, .font-subbrand {
+  font-family: var(--font-ibm-plex-arabic), 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: -0.015em;
+}
+
+/* Ultra-Modern Frosted Glass Panels */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(220, 229, 221, 0.85);
+  box-shadow: 0 8px 32px 0 rgba(66, 110, 73, 0.05), 0 2px 8px 0 rgba(0, 0, 0, 0.02);
+}
+
+.glass-panel-subtle {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(220, 229, 221, 0.65);
+  box-shadow: 0 4px 20px 0 rgba(66, 110, 73, 0.03);
+}
+
+.glass-panel-dark {
+  background: rgba(24, 38, 26, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 40px 0 rgba(15, 30, 18, 0.35);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(220, 229, 221, 0.85);
+  box-shadow: 0 16px 40px -8px rgba(66, 110, 73, 0.1), 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(220, 229, 221, 0.9);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-input:focus {
+  background: #ffffff;
+  border-color: #426E49;
+  box-shadow: 0 0 0 3px rgba(66, 110, 73, 0.18);
+  outline: none;
+}
+
+/* Custom Sleek Dropdown Select (Cross-Platform) */
+.glass-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(220, 229, 221, 0.9);
+  padding-right: 2.75rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-select:focus {
+  background: #ffffff;
+  border-color: #426E49;
+  box-shadow: 0 0 0 3px rgba(66, 110, 73, 0.18);
+  outline: none;
+}
+
+/* Clean, modern PIN styling */
+.font-pin {
+  font-family: var(--font-ibm-plex-arabic), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: 0.12em;
+}
+
+/* Subtle custom scrollbar styled with Ciao Ciao olive green */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3d4c6;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #426E49;
+}
