@@ -13,7 +13,7 @@ export const VAPID_PRIVATE_KEY =
 
 export const VAPID_SUBJECT =
   process.env.VAPID_SUBJECT ||
-  "mailto:admin@ciaociaorestaurant.com";
+  "mailto:admin@CIAOCIAOJO.com";
 
 let vapidConfigured = false;
 export function ensureVapidConfigured() {

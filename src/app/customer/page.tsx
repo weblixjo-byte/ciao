@@ -664,7 +664,7 @@ export default function CustomerPage() {
           <div className="w-12 h-12 rounded-2xl bg-white border border-neutral-200 shadow-xs p-1 object-contain flex items-center justify-center overflow-hidden animate-pulse">
             <img src="/logo.png" alt={config.storeName || "ciao ciao"} className="w-full h-full object-contain" />
           </div>
-          <div className="w-6 h-6 rounded-full border-2 border-neutral-200 border-t-[#426E49] animate-spin" />
+          <div className="w-6 h-6 rounded-full border-2 border-neutral-200 border-t-[#36543D] animate-spin" />
           <span className="text-xs font-semibold font-sans text-neutral-600">Loading your loyalty pass...</span>
         </div>
       </div>
@@ -758,7 +758,7 @@ export default function CustomerPage() {
               {/* Modal Header */}
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-neutral-100">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-lg bg-[#426E49] flex items-center justify-center text-white text-[10px] font-bold">
+                  <div className="w-6 h-6 rounded-lg bg-[#36543D] flex items-center justify-center text-white text-[10px] font-bold">
                     C
                   </div>
                   <span className="text-sm font-semibold text-neutral-800 font-sans">
@@ -838,7 +838,7 @@ export default function CustomerPage() {
                   <button
                     type="submit"
                     disabled={googleLoading}
-                    className="flex-1 py-2.5 rounded-xl bg-[#426E49] hover:bg-[#35593b] text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-98 font-sans"
+                    className="flex-1 py-2.5 rounded-xl bg-[#36543D] hover:bg-[#2a4230] text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-98 font-sans"
                   >
                     {googleLoading ? "Signing in..." : "Continue to Loyalty Pass"}
                   </button>
@@ -894,7 +894,7 @@ export default function CustomerPage() {
               setActiveTab("notifications");
               markAllRead();
             }}
-            className="mb-4 bg-[#426E49] text-white rounded-2xl p-3.5 shadow-md flex items-center justify-between gap-3 cursor-pointer hover:bg-[#35593b] transition-all animate-in fade-in slide-in-from-top-2"
+            className="mb-4 bg-[#36543D] text-white rounded-2xl p-3.5 shadow-md flex items-center justify-between gap-3 cursor-pointer hover:bg-[#2a4230] transition-all animate-in fade-in slide-in-from-top-2"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
@@ -918,7 +918,7 @@ export default function CustomerPage() {
         {/* Web Push Notification Status & Prompts */}
         {/* State 1: Permission has NOT been granted yet -> Show Enable banner */}
         {pushPermission === "default" && !pushSubscribed && (
-          <div className="mb-4 bg-gradient-to-r from-[#426E49] to-[#35593b] text-white rounded-3xl p-4 shadow-md border border-[#426E49] flex items-center justify-between gap-3">
+          <div className="mb-4 bg-gradient-to-r from-[#36543D] to-[#2a4230] text-white rounded-3xl p-4 shadow-md border border-[#36543D] flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center shrink-0 text-white">
                 <Bell className="w-5 h-5" />
@@ -933,7 +933,7 @@ export default function CustomerPage() {
             <button
               onClick={handleEnablePush}
               disabled={pushLoading}
-              className="px-4 py-2 rounded-xl bg-white text-[#426E49] text-xs font-bold hover:bg-emerald-50 transition-all shadow-xs cursor-pointer active:scale-95 shrink-0 font-sans"
+              className="px-4 py-2 rounded-xl bg-white text-[#36543D] text-xs font-bold hover:bg-emerald-50 transition-all shadow-xs cursor-pointer active:scale-95 shrink-0 font-sans"
             >
               {pushLoading ? "Enabling..." : "Enable"}
             </button>
@@ -976,7 +976,7 @@ export default function CustomerPage() {
                           ? "bg-amber-50 text-amber-900 border-amber-200"
                           : customer.tier === "Silver"
                           ? "bg-slate-100 text-slate-800 border-slate-300"
-                          : "bg-emerald-50 text-[#426E49] border-emerald-100"
+                          : "bg-emerald-50 text-[#36543D] border-emerald-100"
                       }`}
                     >
                       {customer.tier} Tier
@@ -1010,7 +1010,7 @@ export default function CustomerPage() {
                   />
                 </div>
                 <span className="text-[11px] text-neutral-500 font-sans mt-2 flex items-center gap-1 font-medium">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#426E49]" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#36543D]" />
                   Dynamic Encrypted QR
                 </span>
               </div>
@@ -1040,7 +1040,7 @@ export default function CustomerPage() {
                 </div>
 
                 {copied && (
-                  <span className="text-[10px] font-sans text-[#426E49] font-semibold mt-1 block">
+                  <span className="text-[10px] font-sans text-[#36543D] font-semibold mt-1 block">
                     Copied to clipboard!
                   </span>
                 )}
@@ -1053,7 +1053,7 @@ export default function CustomerPage() {
                     Available Balance
                   </span>
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-3xl font-bold tracking-tight text-[#426E49] font-sans">
+                    <span className="text-3xl font-bold tracking-tight text-[#36543D] font-sans">
                       {customer.pointsBalance}
                     </span>
                     <span className="text-xs font-sans text-neutral-500 font-semibold">pts</span>
@@ -1062,10 +1062,10 @@ export default function CustomerPage() {
 
                 <div className="text-right">
                   <span className="text-xs font-semibold text-neutral-500 block mb-0.5 font-sans">
-                    Cash Valuation
+                    Rewards Status
                   </span>
-                  <span className="inline-block px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-100 text-xs font-bold text-[#426E49] font-sans">
-                    = {formatCurrency(customer.currencyValue)}
+                  <span className="inline-block px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-100 text-xs font-bold text-[#36543D] font-sans">
+                    {rewards.filter((r) => r.canRedeem).length} Unlocked
                   </span>
                 </div>
               </div>
@@ -1077,7 +1077,7 @@ export default function CustomerPage() {
               className="w-full glass-panel hover:bg-white/80 rounded-2xl p-4 flex items-center justify-between text-left transition-all shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-[#426E49] flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-[#36543D] flex items-center justify-center">
                   <Gift className="w-5 h-5" />
                 </div>
                 <div>
@@ -1103,14 +1103,14 @@ export default function CustomerPage() {
                 <span className="text-xs text-neutral-500 font-semibold block font-sans">
                   Current Points Balance
                 </span>
-                <span className="text-2xl font-bold text-[#426E49] font-sans" dir="ltr">
+                <span className="text-2xl font-bold text-[#36543D] font-sans" dir="ltr">
                   {customer.pointsBalance.toLocaleString()}{" "}
                   <span className="text-xs font-normal text-neutral-500 font-sans">pts</span>
                 </span>
               </div>
               <div className="text-end">
-                <span className="text-xs text-emerald-800 font-semibold bg-emerald-50/80 border border-emerald-200 px-3 py-1 rounded-full block font-sans">
-                  = {formatCurrency(customer.currencyValue)} instant discount
+                <span className="text-xs text-[#36543D] font-semibold bg-emerald-50/80 border border-emerald-200 px-3 py-1 rounded-full block font-sans">
+                  Redeemable in Store
                 </span>
               </div>
             </div>
@@ -1143,7 +1143,7 @@ export default function CustomerPage() {
                       )}
 
                       {/* Points Badge */}
-                      <div className="absolute top-3.5 end-3.5 w-14 h-14 rounded-full bg-[#426E49] text-white border-2 border-white shadow-lg flex flex-col items-center justify-center">
+                      <div className="absolute top-3.5 end-3.5 w-14 h-14 rounded-full bg-[#36543D] text-white border-2 border-white shadow-lg flex flex-col items-center justify-center">
                         <span className="text-base font-extrabold font-mono leading-none">
                           {reward.pointsRequired}
                         </span>
@@ -1181,7 +1181,7 @@ export default function CustomerPage() {
                             onClick={() => {
                               setRedeemingReward(reward);
                             }}
-                            className="w-full py-2.5 rounded-2xl bg-[#426E49] hover:bg-[#35593b] text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-98 font-sans"
+                            className="w-full py-2.5 rounded-2xl bg-[#36543D] hover:bg-[#2a4230] text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-98 font-sans"
                           >
                             <Gift className="w-4 h-4" />
                             <span>Redeem Reward Now</span>
@@ -1190,11 +1190,11 @@ export default function CustomerPage() {
                           <div className="space-y-1.5 py-1">
                             <div className="flex items-center justify-between text-[11px] text-neutral-500 font-sans">
                               <span>{reward.pointsRequired - customer.pointsBalance} pts needed to unlock</span>
-                              <span className="font-semibold text-[#426E49]">{progressPercent}%</span>
+                              <span className="font-semibold text-[#36543D]">{progressPercent}%</span>
                             </div>
                             <div className="w-full h-2 bg-neutral-100 border border-neutral-200 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-[#426E49] rounded-full transition-all duration-500"
+                                className="h-full bg-[#36543D] rounded-full transition-all duration-500"
                                 style={{ width: `${progressPercent}%` }}
                               />
                             </div>
@@ -1229,7 +1229,7 @@ export default function CustomerPage() {
                         <span
                           className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold ${
                             tx.type === "EARN"
-                              ? "bg-emerald-50 text-[#426E49] border border-emerald-100"
+                              ? "bg-emerald-50 text-[#36543D] border border-emerald-100"
                               : "bg-amber-50 text-amber-900 border border-amber-200"
                           }`}
                         >
@@ -1256,7 +1256,7 @@ export default function CustomerPage() {
                     <div className="text-right flex-shrink-0">
                       <span
                         className={`text-sm font-bold font-sans ${
-                          tx.points > 0 ? "text-[#426E49]" : "text-neutral-800"
+                          tx.points > 0 ? "text-[#36543D]" : "text-neutral-800"
                         }`}
                       >
                         {tx.points > 0 ? `+${tx.points}` : tx.points} pts
@@ -1286,7 +1286,7 @@ export default function CustomerPage() {
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllRead}
-                    className="text-xs font-sans text-[#426E49] hover:text-[#35593b] font-semibold flex items-center gap-1 py-1 px-2.5 rounded-lg bg-emerald-50 border border-emerald-100 transition-colors cursor-pointer"
+                    className="text-xs font-sans text-[#36543D] hover:text-[#2a4230] font-semibold flex items-center gap-1 py-1 px-2.5 rounded-lg bg-emerald-50 border border-emerald-100 transition-colors cursor-pointer"
                   >
                     <CheckCheck className="w-3.5 h-3.5" />
                     <span>Mark all read</span>
@@ -1323,7 +1323,7 @@ export default function CustomerPage() {
                             isReward
                               ? "bg-amber-50 text-amber-900 border border-amber-200"
                               : isPoints
-                              ? "bg-emerald-50 text-[#426E49] border border-emerald-100"
+                              ? "bg-emerald-50 text-[#36543D] border border-emerald-100"
                               : "bg-neutral-100 text-neutral-600 border border-neutral-200"
                           }`}>
                             {isReward ? (
@@ -1353,7 +1353,7 @@ export default function CustomerPage() {
                             </p>
                           </div>
                           {!n.isRead && (
-                            <span className="w-2 h-2 rounded-full bg-[#426E49] shrink-0 mt-1.5" />
+                            <span className="w-2 h-2 rounded-full bg-[#36543D] shrink-0 mt-1.5" />
                           )}
                         </div>
                       </div>
@@ -1373,7 +1373,7 @@ export default function CustomerPage() {
             onClick={() => setActiveTab("card")}
             className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 cursor-pointer ${
               activeTab === "card"
-                ? "bg-[#426E49] text-white shadow-sm font-semibold scale-102"
+                ? "bg-[#36543D] text-white shadow-sm font-semibold scale-102"
                 : "text-neutral-500 hover:text-neutral-900 hover:bg-white/40"
             }`}
           >
@@ -1385,7 +1385,7 @@ export default function CustomerPage() {
             onClick={() => setActiveTab("rewards")}
             className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 cursor-pointer ${
               activeTab === "rewards"
-                ? "bg-[#426E49] text-white shadow-sm font-semibold scale-102"
+                ? "bg-[#36543D] text-white shadow-sm font-semibold scale-102"
                 : "text-neutral-500 hover:text-neutral-900 hover:bg-white/40"
             }`}
           >
@@ -1397,7 +1397,7 @@ export default function CustomerPage() {
             onClick={() => setActiveTab("history")}
             className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 cursor-pointer ${
               activeTab === "history"
-                ? "bg-[#426E49] text-white shadow-sm font-semibold scale-102"
+                ? "bg-[#36543D] text-white shadow-sm font-semibold scale-102"
                 : "text-neutral-500 hover:text-neutral-900 hover:bg-white/40"
             }`}
           >
@@ -1412,7 +1412,7 @@ export default function CustomerPage() {
             }}
             className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 cursor-pointer relative ${
               activeTab === "notifications"
-                ? "bg-[#426E49] text-white shadow-sm font-semibold scale-102"
+                ? "bg-[#36543D] text-white shadow-sm font-semibold scale-102"
                 : "text-neutral-500 hover:text-neutral-900 hover:bg-white/40"
             }`}
           >
@@ -1433,7 +1433,7 @@ export default function CustomerPage() {
           <div className="glass-panel rounded-3xl p-6 max-w-sm w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[#426E49]">
+                <div className="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[#36543D]">
                   <Gift className="w-4 h-4" />
                 </div>
                 <h3 className="text-sm font-bold text-neutral-900 font-sans">Redeem Reward</h3>
@@ -1464,18 +1464,18 @@ export default function CustomerPage() {
                 <h4 className="text-sm font-bold text-neutral-900">{redeemingReward.title}</h4>
                 <div className="mt-2 pt-2 border-t border-neutral-200 flex justify-between items-center text-xs">
                   <span className="text-neutral-500 font-sans">Points Value:</span>
-                  <span className="font-bold font-sans text-[#426E49]">{redeemingReward.pointsRequired} pts</span>
+                  <span className="font-bold font-sans text-[#36543D]">{redeemingReward.pointsRequired} pts</span>
                 </div>
               </div>
             </div>
 
             {/* Prominent Counter Code Box */}
-            <div className="glass-panel-subtle border-2 border-[#426E49]/30 rounded-2xl p-4 mb-3 text-center shadow-xs">
+            <div className="glass-panel-subtle border-2 border-[#36543D]/30 rounded-2xl p-4 mb-3 text-center shadow-xs">
               <span className="text-[10px] uppercase tracking-wide font-sans font-semibold text-neutral-500 block mb-1">
                 Give this 6-Digit Code to Cashier
               </span>
               <div className="flex items-center justify-center gap-3">
-                <span className="font-pin text-3xl font-bold tracking-widest text-[#426E49] select-all">
+                <span className="font-pin text-3xl font-bold tracking-widest text-[#36543D] select-all">
                   {customer.formattedPin}
                 </span>
                 <button
@@ -1491,7 +1491,7 @@ export default function CustomerPage() {
                 </button>
               </div>
               {copied && (
-                <span className="text-[10px] font-sans font-medium text-[#426E49] mt-1 block">
+                <span className="text-[10px] font-sans font-medium text-[#36543D] mt-1 block">
                   Copied to clipboard!
                 </span>
               )}
@@ -1523,7 +1523,7 @@ export default function CustomerPage() {
 
             <button
               onClick={() => setRedeemingReward(null)}
-              className="w-full py-3 rounded-2xl bg-[#426E49] hover:bg-[#35593b] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-98"
+              className="w-full py-3 rounded-2xl bg-[#36543D] hover:bg-[#2a4230] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-98"
             >
               Done & Return to Pass
             </button>
@@ -1535,7 +1535,7 @@ export default function CustomerPage() {
       {showIosInstallModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white border border-neutral-200 rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
-            <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 text-[#426E49] flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 text-[#36543D] flex items-center justify-center mx-auto mb-3">
               <Bell className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-neutral-900 mb-1 font-sans">
@@ -1547,19 +1547,19 @@ export default function CustomerPage() {
 
             <div className="bg-[#FAFBFA] border border-neutral-200 rounded-2xl p-4 text-start space-y-3 mb-5 text-xs text-neutral-900">
               <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#426E49] text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-[#36543D] text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
                   1
                 </span>
                 <span>Tap the Share button <strong>⎋ (Share)</strong> in Safari&apos;s bottom toolbar.</span>
               </div>
               <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#426E49] text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-[#36543D] text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
                   2
                 </span>
                 <span>Choose <strong>&quot;Add to Home Screen&quot;</strong>.</span>
               </div>
               <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#426E49] text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-[#36543D] text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
                   3
                 </span>
                 <span>Open <strong>ciao ciao</strong> from your home screen and tap &quot;Enable&quot;.</span>
@@ -1568,7 +1568,7 @@ export default function CustomerPage() {
 
             <button
               onClick={() => setShowIosInstallModal(false)}
-              className="w-full py-2.5 rounded-xl bg-[#426E49] text-white text-xs font-semibold hover:bg-[#35593b] transition-colors cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-[#36543D] text-white text-xs font-semibold hover:bg-[#2a4230] transition-colors cursor-pointer"
             >
               Got it, thanks
             </button>

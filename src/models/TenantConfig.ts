@@ -6,11 +6,11 @@ export interface TenantConfigDocument extends Omit<ITenantConfig, "_id">, Docume
 const TenantConfigSchema = new Schema<TenantConfigDocument>(
   {
     storeName: { type: String, required: true, default: "ciao ciao" },
-    tagline: { type: String, default: "Italian Pasta & Pizza" },
+    tagline: { type: String, default: "Italian Restaurant - Pizza & Pasta" },
     logoUrl: { type: String, default: "/logo.png" },
-    primaryColor: { type: String, default: "#FAFBFA" },
-    accentColor: { type: String, default: "#426E49" },
-    terracottaColor: { type: String, default: "#426E49" },
+    primaryColor: { type: String, default: "#36543D" },
+    accentColor: { type: String, default: "#D4E2D4" },
+    terracottaColor: { type: String, default: "#36543D" },
     currency: { type: String, default: "JOD" },
     pointsPerUnit: { type: Number, default: 10 },
     discountPer100Pts: { type: Number, default: 1.00 },

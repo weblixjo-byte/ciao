@@ -4,11 +4,11 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "ciao ciao",
     short_name: "ciao ciao",
-    description: "ciao ciao Italian Pasta & Pizza Loyalty Pass & Rewards",
+    description: "ciao ciao Italian Restaurant - Pizza & Pasta Loyalty Pass & Rewards",
     start_url: "/customer",
     display: "standalone",
     background_color: "#FAFBFA",
-    theme_color: "#426E49",
+    theme_color: "#36543D",
     icons: [
       {
         src: "/icon-192.png",

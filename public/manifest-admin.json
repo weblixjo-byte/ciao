@@ -2,12 +2,12 @@
   "id": "/admin",
   "name": "ciao ciao Admin Dashboard",
   "short_name": "ciao ciao Admin",
-  "description": "ciao ciao Italian Pasta & Pizza Executive Admin Dashboard",
+  "description": "ciao ciao Italian Restaurant - Pizza & Pasta Executive Admin Dashboard",
   "start_url": "/admin",
   "scope": "/admin",
   "display": "standalone",
   "background_color": "#141f16",
-  "theme_color": "#426E49",
+  "theme_color": "#36543D",
   "orientation": "any",
   "icons": [
     {

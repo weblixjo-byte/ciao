@@ -2,16 +2,16 @@ import bcrypt from "bcryptjs";
 import { ITenantConfig, IUser, ITransaction, IReward, INotification } from "./types";
 
 export function seedInitialData() {
-  const adminPasswordHash = bcrypt.hashSync("ciao@2026", 10);
+  const adminPasswordHash = bcrypt.hashSync("ciao2026@", 10);
 
   const config: ITenantConfig = {
     _id: "config_ciao_default",
     storeName: "ciao ciao",
-    tagline: "Italian Pasta & Pizza",
+    tagline: "Italian Restaurant - Pizza & Pasta",
     logoUrl: "/logo.png",
-    primaryColor: "#FAFBFA",
-    accentColor: "#426E49",
-    terracottaColor: "#426E49",
+    primaryColor: "#36543D",
+    accentColor: "#D4E2D4",
+    terracottaColor: "#36543D",
     currency: "JOD",
     pointsPerUnit: 10,
     discountPer100Pts: 1.0,
@@ -20,20 +20,20 @@ export function seedInitialData() {
   };
 
   const users: IUser[] = [
-    // Super Admin
+    // Super Admin: username ciao / password ciao2026@
     {
-      _id: "admin_fathi",
+      _id: "admin_ciao",
       role: "super_admin",
-      name: "fathi",
-      username: "fathi",
-      email: "admin@ciaociaorestaurant.com",
+      name: "ciao",
+      username: "ciao",
+      email: "admin@CIAOCIAOJO.com",
       passwordHash: adminPasswordHash,
       pointsBalance: 0,
       lifetimePoints: 0,
       tier: "Gold",
       createdAt: new Date().toISOString(),
     },
-    // Cashier: fathi
+    // Cashier: username fathi / PIN 2026
     {
       _id: "cashier_fathi",
       role: "cashier",

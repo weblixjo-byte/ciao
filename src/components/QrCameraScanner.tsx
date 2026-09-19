@@ -207,7 +207,7 @@ export default function QrCameraScanner({ onScan, onClose }: QrCameraScannerProp
         {/* Header */}
         <div className="px-4 py-3.5 border-b border-neutral-800 flex items-center justify-between text-white">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#426E49] border border-emerald-600 flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-xl bg-[#36543D] border border-emerald-600 flex items-center justify-center text-white">
               <Camera className="w-4 h-4" />
             </div>
             <div>
@@ -241,13 +241,13 @@ export default function QrCameraScanner({ onScan, onClose }: QrCameraScannerProp
               {/* Darkened borders */}
               <div className="relative w-64 h-64 border-2 border-white/80 rounded-2xl shadow-[0_0_0_9999px_rgba(0,0,0,0.55)]">
                 {/* 4 Corner brackets */}
-                <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-[#426E49] rounded-tl-lg" />
-                <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-[#426E49] rounded-tr-lg" />
-                <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-[#426E49] rounded-bl-lg" />
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-[#426E49] rounded-br-lg" />
+                <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-[#36543D] rounded-tl-lg" />
+                <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-[#36543D] rounded-tr-lg" />
+                <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-[#36543D] rounded-bl-lg" />
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-[#36543D] rounded-br-lg" />
 
                 {/* Animated Laser Line */}
-                <div className="absolute left-2 right-2 h-0.5 bg-gradient-to-r from-transparent via-[#426E49] to-transparent shadow-[0_0_12px_#426E49] animate-bounce" />
+                <div className="absolute left-2 right-2 h-0.5 bg-gradient-to-r from-transparent via-[#36543D] to-transparent shadow-[0_0_12px_#36543D] animate-bounce" />
               </div>
             </div>
           )}
@@ -255,14 +255,14 @@ export default function QrCameraScanner({ onScan, onClose }: QrCameraScannerProp
           {/* Initializing Loader */}
           {isInitializing && !error && (
             <div className="absolute inset-0 bg-neutral-950/80 flex flex-col items-center justify-center gap-3 text-white">
-              <div className="w-8 h-8 rounded-full border-2 border-[#426E49] border-t-transparent animate-spin" />
+              <div className="w-8 h-8 rounded-full border-2 border-[#36543D] border-t-transparent animate-spin" />
               <span className="text-xs font-sans text-emerald-100">Starting camera stream...</span>
             </div>
           )}
 
           {/* Success Flash Indicator */}
           {scannedResult && (
-            <div className="absolute inset-0 bg-[#426E49]/95 flex flex-col items-center justify-center gap-2 text-white p-4 text-center animate-in zoom-in-95 duration-150">
+            <div className="absolute inset-0 bg-[#36543D]/95 flex flex-col items-center justify-center gap-2 text-white p-4 text-center animate-in zoom-in-95 duration-150">
               <CheckCircle2 className="w-12 h-12 text-white animate-pulse" />
               <span className="text-sm font-bold font-sans">Customer pass identified!</span>
               <span className="text-xs font-sans text-white/90 truncate max-w-xs">{scannedResult}</span>
@@ -279,7 +279,7 @@ export default function QrCameraScanner({ onScan, onClose }: QrCameraScannerProp
               <div className="flex flex-col gap-2 w-full max-w-xs">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-2.5 px-4 rounded-xl bg-[#426E49] hover:bg-[#35593b] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer border border-emerald-600"
+                  className="w-full py-2.5 px-4 rounded-xl bg-[#36543D] hover:bg-[#2a4230] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer border border-emerald-600"
                 >
                   <Upload className="w-4 h-4" />
                   <span>Upload QR Screenshot / Image</span>

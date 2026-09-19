@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "ciao ciao Loyalty Pass",
-  description: "ciao ciao Italian Pasta & Pizza Digital Loyalty Pass & Rewards",
+  description: "ciao ciao Italian Restaurant - Pizza & Pasta Digital Loyalty Pass & Rewards",
   applicationName: "ciao ciao Pass",
   appleWebApp: {
     capable: true,

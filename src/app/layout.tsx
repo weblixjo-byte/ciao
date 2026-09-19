@@ -13,7 +13,7 @@ const ibmPlexArabic = IBM_Plex_Sans_Arabic({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#FAFBFA",
+  themeColor: "#36543D",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -22,7 +22,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "ciao ciao — Loyalty & Rewards",
-  description: "Private digital loyalty pass and rewards for ciao ciao Italian Pasta & Pizza",
+  description: "Private digital loyalty pass and rewards for ciao ciao Italian Restaurant - Pizza & Pasta",
   applicationName: "ciao ciao",
   appleWebApp: {
     capable: true,
@@ -72,10 +72,10 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="theme-color" content="#FAFBFA" />
+        <meta name="theme-color" content="#36543D" />
         {/* manifest and apple-mobile-web-app-title are set per-route via child layouts */}
       </head>
-      <body className={`${ibmPlexArabic.className} min-h-screen bg-[#FAFBFA] text-[#141f16] antialiased selection:bg-[#426E49] selection:text-[#ffffff]`}>
+      <body className={`${ibmPlexArabic.className} min-h-screen bg-[#FAFBFA] text-[#141f16] antialiased selection:bg-[#36543D] selection:text-[#ffffff]`}>
         <BrandProvider>{children}</BrandProvider>
       </body>
     </html>

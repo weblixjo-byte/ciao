@@ -2,12 +2,12 @@
   "id": "/cashier",
   "name": "ciao ciao Cashier POS",
   "short_name": "ciao ciao POS",
-  "description": "ciao ciao Italian Pasta & Pizza Cashier POS Terminal & Scanner",
+  "description": "ciao ciao Italian Restaurant - Pizza & Pasta Cashier POS Terminal & Scanner",
   "start_url": "/cashier",
   "scope": "/cashier",
   "display": "standalone",
   "background_color": "#141f16",
-  "theme_color": "#426E49",
+  "theme_color": "#36543D",
   "orientation": "any",
   "icons": [
     {

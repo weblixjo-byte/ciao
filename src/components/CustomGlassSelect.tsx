@@ -79,7 +79,7 @@ export default function CustomGlassSelect({
         disabled={disabled}
         onClick={() => !disabled && setIsOpen((prev) => !prev)}
         className={`w-full glass-select flex items-center justify-between text-left cursor-pointer transition-all ${
-          isOpen ? "ring-2 ring-[#426E49]/20 border-[#426E49]" : ""
+          isOpen ? "ring-2 ring-[#36543D]/20 border-[#36543D]" : ""
         } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
       >
         <div className="flex items-center gap-2 min-w-0 overflow-hidden pr-2 flex-1">
@@ -94,7 +94,7 @@ export default function CustomGlassSelect({
                 </span>
               )}
               {selectedOption.badge && (
-                <span className="text-[10px] font-bold font-sans px-2 py-0.5 rounded-md bg-emerald-50 text-[#426E49] border border-emerald-200 shrink-0 ml-auto mr-1">
+                <span className="text-[10px] font-bold font-sans px-2 py-0.5 rounded-md bg-emerald-50 text-[#36543D] border border-emerald-200 shrink-0 ml-auto mr-1">
                   {selectedOption.badge}
                 </span>
               )}
@@ -108,14 +108,14 @@ export default function CustomGlassSelect({
 
         <ChevronDown
           className={`w-4 h-4 text-neutral-500 shrink-0 transition-transform duration-200 ${
-            isOpen ? "rotate-180 text-[#426E49]" : ""
+            isOpen ? "rotate-180 text-[#36543D]" : ""
           }`}
         />
       </button>
 
       {/* Floating Glass Menu Popup */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-2xl bg-white/95 backdrop-blur-2xl border border-white/90 shadow-[0_16px_40px_-8px_rgba(66,110,73,0.15),0_4px_16px_rgba(0,0,0,0.06)] p-1.5 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-2xl bg-white/95 backdrop-blur-2xl border border-white/90 shadow-[0_16px_40px_-8px_rgba(54,84,61,0.15),0_4px_16px_rgba(0,0,0,0.06)] p-1.5 animate-in fade-in zoom-in-95 duration-150">
           {searchable && (
             <div className="p-1.5 border-b border-neutral-100 mb-1">
               <div className="relative flex items-center">
@@ -126,7 +126,7 @@ export default function CustomGlassSelect({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder=""
-                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-neutral-50 border border-neutral-200 text-xs focus:outline-none focus:border-[#426E49] focus:bg-white transition-all font-sans"
+                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-neutral-50 border border-neutral-200 text-xs focus:outline-none focus:border-[#36543D] focus:bg-white transition-all font-sans"
                 />
               </div>
             </div>
@@ -150,8 +150,8 @@ export default function CustomGlassSelect({
                     }}
                     className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-left text-xs transition-all cursor-pointer ${
                       isSelected
-                        ? "bg-[#426E49] text-white font-semibold shadow-xs"
-                        : "text-neutral-700 hover:bg-emerald-50 hover:text-[#426E49]"
+                        ? "bg-[#36543D] text-white font-semibold shadow-xs"
+                        : "text-neutral-700 hover:bg-emerald-50 hover:text-[#36543D]"
                     }`}
                   >
                     <div className="flex flex-col min-w-0">
@@ -173,7 +173,7 @@ export default function CustomGlassSelect({
                           className={`text-[10px] font-bold font-sans px-2 py-0.5 rounded-md ${
                             isSelected
                               ? "bg-white/20 text-white"
-                              : "bg-emerald-50 text-[#426E49] border border-emerald-200"
+                              : "bg-emerald-50 text-[#36543D] border border-emerald-200"
                           }`}
                         >
                           {opt.badge}

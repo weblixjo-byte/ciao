@@ -28,7 +28,7 @@ async function generate() {
     .toFile('public/icon-512.png');
   console.log('Saved public/icon-512.png');
 
-  // 4. Apple Touch Icon 180x180 (with #426E49 background)
+  // 4. Apple Touch Icon 180x180 (with #36543D background)
   await sharp(srcPath)
     .resize(180, 180, { fit: 'contain' })
     .png()
@@ -55,7 +55,7 @@ async function generate() {
   fs.copyFileSync('public/favicon.ico', 'src/app/favicon.ico');
   console.log('Copied to src/app metadata icons');
 
-  // 6. Cashier Icons with distinct 'POS' badge in Accent Green
+  // 6. Cashier Icons with distinct 'POS' badge in Forest Green
   async function makeCashierIcon(size, filename) {
     const pad = Math.round(size * 0.08);
     const innerSize = size - pad * 2;
@@ -70,7 +70,7 @@ async function generate() {
 
     const svgBadge = Buffer.from(`
       <svg width="${badgeWidth}" height="${badgeHeight}" viewBox="0 0 ${badgeWidth} ${badgeHeight}" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="0" width="${badgeWidth}" height="${badgeHeight}" rx="${rx}" fill="#1c3a21" stroke="#ffffff" stroke-width="${Math.max(2, Math.round(size*0.015))}" />
+        <rect x="0" y="0" width="${badgeWidth}" height="${badgeHeight}" rx="${rx}" fill="#1c3021" stroke="#ffffff" stroke-width="${Math.max(2, Math.round(size*0.015))}" />
         <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="${fontSize}px" font-weight="900" letter-spacing="1.5">POS</text>
       </svg>
     `);
@@ -80,7 +80,7 @@ async function generate() {
         width: size,
         height: size,
         channels: 4,
-        background: { r: 66, g: 110, b: 73, alpha: 1 } // #426E49
+        background: { r: 54, g: 84, b: 61, alpha: 1 } // #36543D
       }
     })
     .composite([

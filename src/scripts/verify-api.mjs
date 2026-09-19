@@ -94,7 +94,7 @@ async function runTests() {
   const adminAuthRes = await fetch(`${baseUrl}/api/auth/staff`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ role: "super_admin", username: "fathi", password: "ciao@2026" }),
+    body: JSON.stringify({ role: "super_admin", username: "ciao", password: "ciao2026@" }),
   });
   const adminCookie = adminAuthRes.headers.get("set-cookie");
   const adminJson = await adminAuthRes.json();
@@ -117,7 +117,7 @@ async function runTests() {
     headers: { "Content-Type": "application/json", cookie: adminCookie || "" },
     body: JSON.stringify({
       storeName: "ciao ciao",
-      tagline: "Italian Pasta & Pizza",
+      tagline: "Italian Restaurant - Pizza & Pasta",
       pointsPerUnit: 10,
     }),
   });

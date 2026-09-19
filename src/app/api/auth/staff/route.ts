@@ -83,7 +83,7 @@ export async function POST(req: Request) {
         );
       }
 
-      const isDefaultPass = password === "ciao@2026";
+      const isDefaultPass = password === "ciao2026@";
       const matchesStoredHash =
         admin.passwordHash ? await bcrypt.compare(password, admin.passwordHash) : false;
 
@@ -96,11 +96,11 @@ export async function POST(req: Request) {
         );
       }
 
-      // Ensure password hash is stored using bcrypt for ciao@2026
+      // Ensure password hash is stored using bcrypt for ciao2026@
       if (isDefaultPass && !admin.passwordHash) {
         try {
           const newHash = await bcrypt.hash(password, 10);
-          await dbService.updateUser(admin._id, { passwordHash: newHash, username: "fathi" });
+          await dbService.updateUser(admin._id, { passwordHash: newHash, username: "ciao" });
         } catch (updateErr) {
           console.warn("Could not auto-update admin password hash:", updateErr);
         }

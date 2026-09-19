@@ -785,7 +785,7 @@ export default function AdminPage() {
               <button
                 type="submit"
                 disabled={loginLoading}
-                className="w-full py-3.5 rounded-2xl bg-[#426E49] hover:bg-[#35593b] text-white text-sm font-bold transition-all disabled:opacity-50 mt-2 cursor-pointer shadow-md hover:shadow-lg active:scale-98"
+                className="w-full py-3.5 rounded-2xl bg-[#36543D] hover:bg-[#2a4230] text-white text-sm font-bold transition-all disabled:opacity-50 mt-2 cursor-pointer shadow-md hover:shadow-lg active:scale-98"
               >
                 {loginLoading ? t.authenticating : t.signIn}
               </button>
@@ -794,12 +794,12 @@ export default function AdminPage() {
         </div>
 
         <div className="text-center text-xs text-neutral-500 py-4 flex items-center justify-center gap-4">
-          <Link href="/cashier" className="hover:text-[#426E49] underline flex items-center gap-1 font-medium transition-colors">
-            <Pizza className="w-3.5 h-3.5 text-[#426E49]" />
+          <Link href="/cashier" className="hover:text-[#36543D] underline flex items-center gap-1 font-medium transition-colors">
+            <Pizza className="w-3.5 h-3.5 text-[#36543D]" />
             {t.openCashier}
           </Link>
           <span className="text-neutral-300">•</span>
-          <Link href="/customer" className="hover:text-[#426E49] underline font-medium transition-colors">
+          <Link href="/customer" className="hover:text-[#36543D] underline font-medium transition-colors">
             {t.openCustomer}
           </Link>
         </div>
@@ -817,7 +817,7 @@ export default function AdminPage() {
               <X className="w-5 h-5" />
             </button>
 
-            <div className="w-12 h-12 rounded-2xl bg-[#426E49] text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+            <div className="w-12 h-12 rounded-2xl bg-[#36543D] text-white flex items-center justify-center mx-auto mb-3 shadow-md">
               <Smartphone className="w-6 h-6" />
             </div>
 
@@ -830,15 +830,15 @@ export default function AdminPage() {
 
             <div className="space-y-3 glass-panel-subtle rounded-2xl p-4 text-xs text-neutral-800">
               <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#426E49] text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                <span className="w-5 h-5 rounded-full bg-[#36543D] text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
                 <span>Tap the <strong>Share</strong> button in Safari or <strong>Menu (⋮)</strong> in Chrome.</span>
               </div>
               <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#426E49] text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                <span className="w-5 h-5 rounded-full bg-[#36543D] text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
                 <span>Select <strong>&quot;Add to Home Screen&quot;</strong>.</span>
               </div>
               <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#426E49] text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                <span className="w-5 h-5 rounded-full bg-[#36543D] text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
                 <span>Tap <strong>Add</strong>. The icon will be named <strong>{config.storeName || "ciao ciao"} Admin</strong> and will open the dashboard directly.</span>
               </div>
             </div>
@@ -846,7 +846,7 @@ export default function AdminPage() {
             <button
               type="button"
               onClick={() => setShowInstallGuide(false)}
-              className="w-full mt-4 py-2.5 rounded-xl bg-[#426E49] hover:bg-[#35593b] text-white text-xs font-bold transition-colors cursor-pointer shadow-sm"
+              className="w-full mt-4 py-2.5 rounded-xl bg-[#36543D] hover:bg-[#2a4230] text-white text-xs font-bold transition-colors cursor-pointer shadow-sm"
             >
               Got It
             </button>
@@ -882,7 +882,7 @@ export default function AdminPage() {
               <span className="font-bold text-sm text-neutral-900 block leading-tight truncate font-sans">
                 {config.storeName}
               </span>
-              <span className="text-[10px] text-[#426E49] uppercase font-bold tracking-normal font-sans block mt-0.5">
+              <span className="text-[10px] text-[#36543D] uppercase font-bold tracking-normal font-sans block mt-0.5">
                 {t.superAdmin}
               </span>
             </div>
@@ -894,7 +894,7 @@ export default function AdminPage() {
               title={t.openCashier}
               className="px-2.5 py-1.5 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-xs font-medium text-neutral-800 transition-colors flex items-center gap-1 shadow-2xs"
             >
-              <Pizza className="w-3.5 h-3.5 text-[#426E49]" />
+              <Pizza className="w-3.5 h-3.5 text-[#36543D]" />
               <span className="hidden sm:inline">{t.openCashier}</span>
             </Link>
 
@@ -902,7 +902,7 @@ export default function AdminPage() {
               <button
                 type="button"
                 onClick={handleInstallClick}
-                className="px-2.5 py-1.5 rounded-xl border border-red-200 bg-red-50/70 hover:bg-red-50 text-xs font-semibold text-[#426E49] flex items-center gap-1 transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 rounded-xl border border-red-200 bg-red-50/70 hover:bg-red-50 text-xs font-semibold text-[#36543D] flex items-center gap-1 transition-colors cursor-pointer"
                 title="Install Admin Dashboard"
               >
                 <Smartphone className="w-3.5 h-3.5" />
@@ -931,11 +931,11 @@ export default function AdminPage() {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-3 py-2 rounded-xl text-xs font-medium shrink-0 flex items-center gap-1.5 transition-all cursor-pointer ${
                   isActive
-                    ? "bg-[#426E49] text-white shadow-xs font-semibold"
+                    ? "bg-[#36543D] text-white shadow-xs font-semibold"
                     : "bg-white/80 text-neutral-700 hover:bg-white border border-neutral-200/80"
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-[#426E49]"}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-[#36543D]"}`} />
                 <span>{tab.label}</span>
               </button>
             );
@@ -955,7 +955,7 @@ export default function AdminPage() {
               <span className="font-bold text-base text-neutral-900 block leading-tight truncate font-sans">
                 {config.storeName}
               </span>
-              <span className="text-[11px] text-[#426E49] uppercase font-bold tracking-normal font-sans block mt-0.5">
+              <span className="text-[11px] text-[#36543D] uppercase font-bold tracking-normal font-sans block mt-0.5">
                 {t.superAdmin}
               </span>
             </div>
@@ -972,11 +972,11 @@ export default function AdminPage() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                     isActive
-                      ? "bg-[#426E49] text-white shadow-sm font-semibold"
+                      ? "bg-[#36543D] text-white shadow-sm font-semibold"
                       : "text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100/70"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-white" : "text-[#426E49]"}`} />
+                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-white" : "text-[#36543D]"}`} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -998,9 +998,9 @@ export default function AdminPage() {
           <div className="flex items-center justify-between pt-1">
             <Link
               href="/cashier"
-              className="text-xs text-[#426E49] hover:text-[#35593b] font-semibold flex items-center gap-1.5 transition-colors"
+              className="text-xs text-[#36543D] hover:text-[#2a4230] font-semibold flex items-center gap-1.5 transition-colors"
             >
-              <Pizza className="w-3.5 h-3.5 text-[#426E49]" />
+              <Pizza className="w-3.5 h-3.5 text-[#36543D]" />
               {t.openCashier}
             </Link>
             <div className="flex items-center gap-2">
@@ -1008,7 +1008,7 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={handleInstallClick}
-                  className="text-xs text-[#426E49] hover:text-[#35593b] flex items-center gap-1 cursor-pointer font-semibold"
+                  className="text-xs text-[#36543D] hover:text-[#2a4230] flex items-center gap-1 cursor-pointer font-semibold"
                   title="Install Admin App"
                 >
                   <Smartphone className="w-3.5 h-3.5" />
@@ -1045,7 +1045,7 @@ export default function AdminPage() {
               <button
                 onClick={loadMetrics}
                 disabled={loadingMetrics}
-                className="px-4 py-2.5 rounded-2xl glass-panel hover:bg-white text-xs font-semibold text-[#426E49] flex items-center gap-2 self-start transition-all shadow-xs cursor-pointer active:scale-95"
+                className="px-4 py-2.5 rounded-2xl glass-panel hover:bg-white text-xs font-semibold text-[#36543D] flex items-center gap-2 self-start transition-all shadow-xs cursor-pointer active:scale-95"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loadingMetrics ? "animate-spin" : ""}`} />
                 <span>{t.refreshData}</span>
@@ -1055,7 +1055,7 @@ export default function AdminPage() {
             {/* Metrics Cards Grid - Clean Minimalist Luxury Glass */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Card 1: Revenue Volume */}
-              <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#426E49]/30">
+              <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#36543D]/30">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[11px] font-semibold text-neutral-500">{t.cardRevenue}</span>
                   <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center">
@@ -1071,14 +1071,14 @@ export default function AdminPage() {
               </div>
 
               {/* Card 2: Points Issued */}
-              <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#426E49]/30">
+              <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#36543D]/30">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[11px] font-semibold text-neutral-500">{t.cardIssued}</span>
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#426E49] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#36543D] flex items-center justify-center">
                     <TrendingUp className="w-4 h-4" />
                   </div>
                 </div>
-                <div className="text-2xl font-bold text-[#426E49] font-sans" dir="ltr">
+                <div className="text-2xl font-bold text-[#36543D] font-sans" dir="ltr">
                   +{metrics?.totalPointsIssued.toLocaleString() || 0}
                 </div>
                 <span className="text-[11px] text-neutral-400 mt-1 block font-sans">
@@ -1087,7 +1087,7 @@ export default function AdminPage() {
               </div>
 
               {/* Card 3: Points Redeemed */}
-              <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#426E49]/30">
+              <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#36543D]/30">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[11px] font-semibold text-neutral-500">{t.cardRedeemed}</span>
                   <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center">
@@ -1103,7 +1103,7 @@ export default function AdminPage() {
               </div>
 
               {/* Card 4: Active Customer Base */}
-              <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#426E49]/30">
+              <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#36543D]/30">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[11px] font-semibold text-neutral-500">{t.cardMembers}</span>
                   <div className="w-8 h-8 rounded-xl bg-neutral-100 text-neutral-800 flex items-center justify-center">
@@ -1125,12 +1125,12 @@ export default function AdminPage() {
               <div className="glass-panel rounded-3xl p-6 sm:p-7 shadow-sm">
                 <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#dce5dd]/60">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-[#426E49]" />
+                    <div className="w-2 h-2 rounded-full bg-[#36543D]" />
                     <h3 className="text-sm font-bold text-neutral-900 font-sans">{t.topCustomers}</h3>
                   </div>
                   <button
                     onClick={() => setActiveTab("customers")}
-                    className="text-xs text-[#426E49] hover:underline font-semibold cursor-pointer"
+                    className="text-xs text-[#36543D] hover:underline font-semibold cursor-pointer"
                   >
                     View All Members →
                   </button>
@@ -1146,7 +1146,7 @@ export default function AdminPage() {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-semibold text-neutral-900">{cust.name}</span>
-                            <span className="text-[9px] px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-[#426E49] border border-emerald-100">
+                            <span className="text-[9px] px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-[#36543D] border border-emerald-100">
                               {cust.tier}
                             </span>
                           </div>
@@ -1157,7 +1157,7 @@ export default function AdminPage() {
                       </div>
 
                       <div className={lang === "ar" ? "text-left" : "text-right"}>
-                        <span className="text-xs font-bold font-mono text-[#426E49] block" dir="ltr">
+                        <span className="text-xs font-bold font-mono text-[#36543D] block" dir="ltr">
                           {cust.lifetimePoints} {t.pts}
                         </span>
                         <span className="text-[10px] text-neutral-400 font-mono" dir="ltr">
@@ -1207,7 +1207,7 @@ export default function AdminPage() {
                           <span
                             dir="ltr"
                             className={`font-mono font-bold block ${
-                              tx.points > 0 ? "text-emerald-700" : "text-[#426E49]"
+                              tx.points > 0 ? "text-emerald-700" : "text-[#36543D]"
                             }`}
                           >
                             {tx.points > 0 ? `+${tx.points}` : tx.points} {t.pts}
@@ -1243,12 +1243,12 @@ export default function AdminPage() {
               <div className="flex items-center gap-3">
                 <div className="px-3.5 py-1.5 rounded-xl bg-white border border-neutral-200 shadow-2xs text-xs">
                   <span className="text-neutral-500 font-sans text-[11px] me-1.5">{t.totalCustomers}:</span>
-                  <span className="font-bold text-[#426E49]">{customersList.length}</span>
+                  <span className="font-bold text-[#36543D]">{customersList.length}</span>
                 </div>
                 <button
                   onClick={loadCustomers}
                   disabled={loadingCustomers}
-                  className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-xs font-semibold text-[#426E49] flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 text-xs font-semibold text-[#36543D] flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${loadingCustomers ? "animate-spin" : ""}`} />
                   <span>{t.refreshData}</span>
@@ -1304,7 +1304,7 @@ export default function AdminPage() {
                         <tr key={c.id} className="hover:bg-neutral-50/80 transition-colors">
                           <td className="py-3.5 px-5">
                             <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded-xl bg-[#426E49] text-white font-semibold text-xs flex items-center justify-center flex-shrink-0 shadow-2xs">
+                              <div className="w-8 h-8 rounded-xl bg-[#36543D] text-white font-semibold text-xs flex items-center justify-center flex-shrink-0 shadow-2xs">
                                 {c.name ? c.name.charAt(0).toUpperCase() : "C"}
                               </div>
                               <div>
@@ -1321,7 +1321,7 @@ export default function AdminPage() {
                             {c.phone || "—"}
                           </td>
                           <td className="py-3.5 px-4">
-                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold border bg-emerald-50 text-[#426E49] border-emerald-100">
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold border bg-emerald-50 text-[#36543D] border-emerald-100">
                               {c.tier || "Member"}
                             </span>
                           </td>
@@ -1335,7 +1335,7 @@ export default function AdminPage() {
                                 setBroadcastAudience("single");
                                 setActiveTab("broadcast");
                               }}
-                              className="px-3 py-1.5 rounded-xl bg-neutral-50 hover:bg-[#426E49] text-neutral-700 hover:text-white border border-neutral-200 text-[11px] font-semibold transition-all flex items-center gap-1.5 ms-auto cursor-pointer shadow-2xs"
+                              className="px-3 py-1.5 rounded-xl bg-neutral-50 hover:bg-[#36543D] text-neutral-700 hover:text-white border border-neutral-200 text-[11px] font-semibold transition-all flex items-center gap-1.5 ms-auto cursor-pointer shadow-2xs"
                             >
                               <Send className="w-3 h-3" />
                               <span>{t.tblSendNotif}</span>
@@ -1373,7 +1373,7 @@ export default function AdminPage() {
               <button
                 type="button"
                 onClick={() => setShowAddRewardModal(true)}
-                className="px-4 py-2.5 rounded-xl bg-[#426E49] text-white text-xs font-bold hover:bg-[#35593b] transition-all flex items-center gap-2 shadow-xs cursor-pointer self-start sm:self-auto shrink-0 active:scale-98"
+                className="px-4 py-2.5 rounded-xl bg-[#36543D] text-white text-xs font-bold hover:bg-[#2a4230] transition-all flex items-center gap-2 shadow-xs cursor-pointer self-start sm:self-auto shrink-0 active:scale-98"
               >
                 <Plus className="w-4 h-4" />
                 <span>{t.addReward}</span>
@@ -1382,7 +1382,7 @@ export default function AdminPage() {
 
             {rewardsList.length === 0 ? (
               <div className="bg-white border border-neutral-200 rounded-3xl p-10 text-center shadow-xs">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[#426E49] flex items-center justify-center mx-auto mb-3 border border-emerald-100">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[#36543D] flex items-center justify-center mx-auto mb-3 border border-emerald-100">
                   <Gift className="w-7 h-7" />
                 </div>
                 <h3 className="text-base font-bold text-neutral-900 mb-1">No Rewards Created Yet</h3>
@@ -1392,7 +1392,7 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddRewardModal(true)}
-                  className="px-4 py-2 rounded-xl bg-[#426E49] text-white text-xs font-bold hover:bg-[#35593b] transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#36543D] text-white text-xs font-bold hover:bg-[#2a4230] transition-colors cursor-pointer"
                 >
                   Create First Reward
                 </button>
@@ -1420,7 +1420,7 @@ export default function AdminPage() {
                         )}
 
                         {/* Points Cost Floating Badge */}
-                        <div className="absolute top-3 end-3 px-3 py-1 rounded-full bg-[#426E49] text-white shadow-sm flex items-center gap-1 font-mono text-xs font-bold">
+                        <div className="absolute top-3 end-3 px-3 py-1 rounded-full bg-[#36543D] text-white shadow-sm flex items-center gap-1 font-mono text-xs font-bold">
                           <span>{reward.pointsRequired}</span>
                           <span className="text-[10px] opacity-90 uppercase font-sans">pts</span>
                         </div>
@@ -1493,7 +1493,7 @@ export default function AdminPage() {
 
               <button
                 onClick={() => setShowAddCashierModal(true)}
-                className="px-4 py-2 rounded-xl bg-[#426E49] text-white text-xs font-semibold hover:bg-[#35593b] transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer shrink-0 active:scale-98"
+                className="px-4 py-2 rounded-xl bg-[#36543D] text-white text-xs font-semibold hover:bg-[#2a4230] transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer shrink-0 active:scale-98"
               >
                 <Plus className="w-3.5 h-3.5" />
                 {t.addCashier}
@@ -1536,7 +1536,7 @@ export default function AdminPage() {
                         <td className="py-3.5 px-5 text-end">
                           <button
                             onClick={() => handleToggleCashier(c.id, c.isActive)}
-                            className="text-[#426E49] hover:text-[#35593b] text-xs underline font-semibold cursor-pointer"
+                            className="text-[#36543D] hover:text-[#2a4230] text-xs underline font-semibold cursor-pointer"
                           >
                             {c.isActive ? t.deactivate : t.reactivate}
                           </button>
@@ -1588,7 +1588,7 @@ export default function AdminPage() {
                     onClick={() => setBroadcastAudience("all")}
                     className={`py-2.5 px-3 rounded-xl border text-xs text-center transition-all cursor-pointer ${
                       broadcastAudience === "all"
-                        ? "bg-[#426E49] text-white border-[#426E49] shadow-xs font-semibold"
+                        ? "bg-[#36543D] text-white border-[#36543D] shadow-xs font-semibold"
                         : "bg-white/80 text-neutral-700 border-neutral-200 hover:bg-white font-medium"
                     }`}
                   >
@@ -1599,7 +1599,7 @@ export default function AdminPage() {
                     onClick={() => setBroadcastAudience("single")}
                     className={`py-2.5 px-3 rounded-xl border text-xs text-center transition-all cursor-pointer ${
                       broadcastAudience === "single"
-                        ? "bg-[#426E49] text-white border-[#426E49] shadow-xs font-semibold"
+                        ? "bg-[#36543D] text-white border-[#36543D] shadow-xs font-semibold"
                         : "bg-white/80 text-neutral-700 border-neutral-200 hover:bg-white font-medium"
                     }`}
                   >
@@ -1685,7 +1685,7 @@ export default function AdminPage() {
                 <button
                   type="submit"
                   disabled={broadcastSending}
-                  className="px-6 py-2.5 rounded-xl bg-[#426E49] hover:bg-[#35593b] text-white text-xs font-bold transition-all disabled:opacity-50 flex items-center gap-2 shadow-xs cursor-pointer active:scale-98"
+                  className="px-6 py-2.5 rounded-xl bg-[#36543D] hover:bg-[#2a4230] text-white text-xs font-bold transition-all disabled:opacity-50 flex items-center gap-2 shadow-xs cursor-pointer active:scale-98"
                 >
                   <Send className="w-3.5 h-3.5" />
                   {broadcastSending
@@ -1709,7 +1709,7 @@ export default function AdminPage() {
           >
             <div className="flex items-center justify-between pb-4 border-b border-neutral-200 mb-5">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-[#426E49] text-white flex items-center justify-center shadow-xs">
+                <div className="w-10 h-10 rounded-xl bg-[#36543D] text-white flex items-center justify-center shadow-xs">
                   <Gift className="w-5 h-5" />
                 </div>
                 <div>
@@ -1778,7 +1778,7 @@ export default function AdminPage() {
                     {/* Desktop Hover Controls Overlay */}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex items-center justify-center gap-2.5">
                       <label className="px-3.5 py-2 rounded-xl bg-white text-neutral-900 text-xs font-bold shadow-md cursor-pointer hover:bg-neutral-50 flex items-center gap-1.5 transition-all">
-                        <Camera className="w-3.5 h-3.5 text-[#426E49]" />
+                        <Camera className="w-3.5 h-3.5 text-[#36543D]" />
                         <span>Change Photo</span>
                         <input
                           type="file"
@@ -1831,8 +1831,8 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ) : (
-                  <label className="w-full py-8 px-4 rounded-2xl border-2 border-dashed border-neutral-200 hover:border-[#426E49] bg-neutral-50/60 hover:bg-neutral-50 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99] text-center">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#426E49] flex items-center justify-center">
+                  <label className="w-full py-8 px-4 rounded-2xl border-2 border-dashed border-neutral-200 hover:border-[#36543D] bg-neutral-50/60 hover:bg-neutral-50 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99] text-center">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#36543D] flex items-center justify-center">
                       <Upload className="w-6 h-6" />
                     </div>
                     <div>
@@ -1843,7 +1843,7 @@ export default function AdminPage() {
                         Camera, Photo Library, or Files (JPG, PNG, WebP)
                       </span>
                     </div>
-                    <span className="text-[10px] font-sans text-[#426E49] bg-emerald-50 px-2.5 py-0.5 rounded-full mt-1 font-medium">
+                    <span className="text-[10px] font-sans text-[#36543D] bg-emerald-50 px-2.5 py-0.5 rounded-full mt-1 font-medium">
                       Auto-compressed on device for instant loading
                     </span>
                     <input
@@ -1905,7 +1905,7 @@ export default function AdminPage() {
                 <button
                   type="submit"
                   disabled={createRewardLoading}
-                  className="px-5 py-2.5 rounded-xl bg-[#426E49] text-white text-xs font-bold hover:bg-[#35593b] transition-all cursor-pointer shadow-xs disabled:opacity-50 active:scale-98 flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-[#36543D] text-white text-xs font-bold hover:bg-[#2a4230] transition-all cursor-pointer shadow-xs disabled:opacity-50 active:scale-98 flex items-center gap-1.5"
                 >
                   {createRewardLoading ? (
                     <>
@@ -1997,7 +1997,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-[#426E49] text-white text-xs font-bold hover:bg-[#35593b] transition-colors shadow-xs cursor-pointer active:scale-98"
+                  className="px-5 py-2.5 rounded-xl bg-[#36543D] text-white text-xs font-bold hover:bg-[#2a4230] transition-colors shadow-xs cursor-pointer active:scale-98"
                 >
                   {t.createAccount}
                 </button>

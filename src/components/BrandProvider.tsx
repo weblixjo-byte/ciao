@@ -5,11 +5,11 @@ import { ITenantConfig } from "@/lib/types";
 
 const defaultBrandConfig: ITenantConfig = {
   storeName: "ciao ciao",
-  tagline: "Italian Pasta & Pizza",
+  tagline: "Italian Restaurant - Pizza & Pasta",
   logoUrl: "/logo.png",
-  primaryColor: "#FAFBFA",
-  accentColor: "#426E49",
-  terracottaColor: "#426E49",
+  primaryColor: "#36543D",
+  accentColor: "#D4E2D4",
+  terracottaColor: "#36543D",
   currency: "JOD",
   pointsPerUnit: 10,
   discountPer100Pts: 1.0,

@@ -9,9 +9,9 @@ const TenantConfigSchema = new mongoose.Schema({
   storeName: { type: String, required: true },
   tagline: { type: String, default: "" },
   logoUrl: { type: String, default: "/logo.png" },
-  primaryColor: { type: String, default: "#FAFBFA" },
-  accentColor: { type: String, default: "#426E49" },
-  terracottaColor: { type: String, default: "#426E49" },
+  primaryColor: { type: String, default: "#36543D" },
+  accentColor: { type: String, default: "#D4E2D4" },
+  terracottaColor: { type: String, default: "#36543D" },
   currency: { type: String, default: "JOD" },
   pointsPerUnit: { type: Number, default: 10 },
   discountPer100Pts: { type: Number, default: 1.0 },
@@ -40,6 +40,46 @@ const UserSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+const TransactionSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  type: { type: String, required: true },
+  customerId: { type: String, required: true },
+  customerName: { type: String },
+  customerPhone: { type: String },
+  cashierId: { type: String },
+  cashierName: { type: String },
+  branchName: { type: String },
+  billAmount: { type: Number },
+  currency: { type: String, default: "JOD" },
+  points: { type: Number, required: true },
+  balanceAfter: { type: Number, required: true },
+  rewardTitle: { type: String },
+  referenceCode: { type: String },
+  notes: { type: String },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const RewardSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  title: { type: String, required: true },
+  description: { type: String },
+  pointsRequired: { type: Number, required: true },
+  isActive: { type: Boolean, default: true },
+  imageUrl: { type: String },
+  claimedCount: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const NotificationSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  customerId: { type: String, required: true },
+  title: { type: String, required: true },
+  message: { type: String, required: true },
+  type: { type: String, default: "SYSTEM" },
+  isRead: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+});
+
 async function runSeed() {
   console.log("Connecting to MongoDB Atlas for ciao ciao...");
   await mongoose.connect(uri, { serverSelectionTimeoutMS: 10000 });
@@ -47,50 +87,53 @@ async function runSeed() {
 
   const TenantConfig = mongoose.models.TenantConfig || mongoose.model('TenantConfig', TenantConfigSchema);
   const User = mongoose.models.User || mongoose.model('User', UserSchema);
+  const Transaction = mongoose.models.Transaction || mongoose.model('Transaction', TransactionSchema);
+  const Reward = mongoose.models.Reward || mongoose.model('Reward', RewardSchema);
+  const Notification = mongoose.models.Notification || mongoose.model('Notification', NotificationSchema);
 
-  // 1. Clean old test accounts if any
-  await User.deleteMany({ username: { $in: ["cove", "sajji", "ahmad", "xian-admin", "salah"] } });
+  // 1. Wipe all test customers, transactions, rewards, notifications to ensure 100% clean slate
+  console.log("Cleaning customer, transaction, and old account collections...");
+  await User.deleteMany({});
+  await Transaction.deleteMany({});
+  await Reward.deleteMany({});
+  await Notification.deleteMany({});
+  await TenantConfig.deleteMany({});
 
   // 2. Upsert TenantConfig
   const configData = {
     _id: "config_ciao_default",
     storeName: "ciao ciao",
-    tagline: "Italian Pasta & Pizza",
+    tagline: "Italian Restaurant - Pizza & Pasta",
     logoUrl: "/logo.png",
-    primaryColor: "#FAFBFA",
-    accentColor: "#426E49",
-    terracottaColor: "#426E49",
+    primaryColor: "#36543D",
+    accentColor: "#D4E2D4",
+    terracottaColor: "#36543D",
     currency: "JOD",
     pointsPerUnit: 10,
     discountPer100Pts: 1.0,
     welcomeBonusPts: 50,
     updatedAt: new Date(),
   };
-  await TenantConfig.deleteMany({});
   await TenantConfig.create(configData);
-  console.log("Seeded TenantConfig:", configData.storeName);
+  console.log("Seeded TenantConfig:", configData.storeName, "-", configData.tagline);
 
-  // 3. Upsert Super Admin (fathi / ciao@2026)
-  const adminHash = bcrypt.hashSync("ciao@2026", 10);
-  await User.deleteMany({ _id: { $in: ["admin_01", "admin_fathi"] } });
-  await User.deleteMany({ username: "fathi", role: "super_admin" });
+  // 3. Upsert Super Admin (username=ciao, password=ciao2026@)
+  const adminHash = bcrypt.hashSync("ciao2026@", 10);
   const adminUser = await User.create({
-    _id: "admin_fathi",
+    _id: "admin_ciao",
     role: "super_admin",
-    name: "fathi",
-    username: "fathi",
-    email: "admin@ciaociaorestaurant.com",
+    name: "ciao",
+    username: "ciao",
+    email: "admin@CIAOCIAOJO.com",
     passwordHash: adminHash,
     pointsBalance: 0,
     lifetimePoints: 0,
     tier: "Gold",
     isActive: true,
   });
-  console.log("Seeded Super Admin: username=fathi, password=ciao@2026");
+  console.log("Seeded Super Admin: username=ciao, password=ciao2026@, email=admin@CIAOCIAOJO.com");
 
-  // 4. Upsert Cashier (fathi / PIN 2026)
-  await User.deleteMany({ _id: { $in: ["cashier_salah", "cashier_fathi"] } });
-  await User.deleteMany({ username: "fathi", role: "cashier" });
+  // 4. Upsert Cashier (username=fathi, PIN=2026)
   const cashierUser = await User.create({
     _id: "cashier_fathi",
     role: "cashier",
@@ -109,7 +152,7 @@ async function runSeed() {
   const allUsers = await User.find({}).lean();
   console.log("Current Database Users count:", allUsers.length);
   for (const u of allUsers) {
-    console.log(` - Role: ${u.role}, Username: ${u.username || 'N/A'}, Name: ${u.name}, StaffPin: ${u.staffPin || 'N/A'}`);
+    console.log(` - Role: ${u.role}, Username: ${u.username || 'N/A'}, Name: ${u.name}, StaffPin: ${u.staffPin || 'N/A'}, Email: ${u.email || 'N/A'}`);
   }
 
   console.log("ALL CIAO CIAO SEEDING COMPLETED SUCCESSFULLY!");
