@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 
-const srcPath = 'C:/Users/VECTUS-H/.gemini/antigravity/brain/fc7b7983-93a0-44bf-8339-cdc7e4051d25/.user_uploaded/media_1789784507290.jpg';
+const srcPath = 'C:/Users/VECTUS-H/.gemini/antigravity/brain/6bfdae11-52fd-49c0-b174-d1a838053d63/.user_uploaded/media_1789855764059.jpg';
 
 async function generate() {
   console.log('Generating ciao ciao icons from:', srcPath);
