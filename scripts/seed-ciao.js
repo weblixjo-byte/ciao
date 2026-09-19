@@ -98,6 +98,11 @@ async function runSeed() {
   await Reward.deleteMany({});
   await Notification.deleteMany({});
   await TenantConfig.deleteMany({});
+  try {
+    await mongoose.connection.db.collection('pushsubscriptions').deleteMany({});
+  } catch (e) {
+    // collection may not exist yet
+  }
 
   // 2. Upsert TenantConfig
   const configData = {
@@ -119,7 +124,7 @@ async function runSeed() {
 
   // 3. Upsert Super Admin (username=ciao, password=ciao2026@)
   const adminHash = bcrypt.hashSync("ciao2026@", 10);
-  const adminUser = await User.create({
+  await User.create({
     _id: "admin_ciao",
     role: "super_admin",
     name: "ciao",
@@ -134,7 +139,7 @@ async function runSeed() {
   console.log("Seeded Super Admin: username=ciao, password=ciao2026@, email=admin@CIAOCIAOJO.com");
 
   // 4. Upsert Cashier (username=fathi, PIN=2026)
-  const cashierUser = await User.create({
+  await User.create({
     _id: "cashier_fathi",
     role: "cashier",
     name: "fathi",
@@ -149,11 +154,15 @@ async function runSeed() {
   console.log("Seeded Cashier: username=fathi, PIN=2026, Branch=Main Branch");
 
   // 5. Verification queries
-  const allUsers = await User.find({}).lean();
-  console.log("Current Database Users count:", allUsers.length);
-  for (const u of allUsers) {
-    console.log(` - Role: ${u.role}, Username: ${u.username || 'N/A'}, Name: ${u.name}, StaffPin: ${u.staffPin || 'N/A'}, Email: ${u.email || 'N/A'}`);
+  const cols = await mongoose.connection.db.listCollections().toArray();
+  console.log("\n================ VERIFIED COLLECTIONS STATS ================");
+  for (const c of cols) {
+    const count = await mongoose.connection.db.collection(c.name).countDocuments();
+    console.log(`Collection [${c.name}]: ${count} documents`);
   }
+  const custCount = await User.countDocuments({ role: "customer" });
+  console.log(`\nVerified Customer Accounts (MUST BE ZERO): ${custCount}`);
+  console.log("============================================================\n");
 
   console.log("ALL CIAO CIAO SEEDING COMPLETED SUCCESSFULLY!");
   process.exit(0);
