@@ -68,18 +68,28 @@ h1, h2, h3, h4, h5, h6, .font-brand, .font-subbrand {
 }
 
 .glass-input {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(212, 226, 212, 0.85);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(212, 226, 212, 0.85);
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #1c1917;
+  box-shadow: 0 2px 8px -2px rgba(54, 84, 61, 0.05), inset 0 1px 2px rgba(0, 0, 0, 0.02);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-input:focus {
   background: #ffffff;
   border-color: #36543D;
-  box-shadow: 0 0 0 3px rgba(54, 84, 61, 0.18);
+  box-shadow: 0 0 0 4px rgba(54, 84, 61, 0.12), 0 4px 16px -4px rgba(54, 84, 61, 0.08);
   outline: none;
+}
+
+.glass-input::placeholder {
+  color: #a8a29e;
+  font-size: 0.875rem;
 }
 
 /* Custom Sleek Dropdown Select (Cross-Platform) */
@@ -87,18 +97,22 @@ h1, h2, h3, h4, h5, h6, .font-brand, .font-subbrand {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(212, 226, 212, 0.85);
-  padding-right: 2.75rem;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(212, 226, 212, 0.85);
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #1c1917;
+  box-shadow: 0 2px 8px -2px rgba(54, 84, 61, 0.05);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-select:focus {
   background: #ffffff;
   border-color: #36543D;
-  box-shadow: 0 0 0 3px rgba(54, 84, 61, 0.18);
+  box-shadow: 0 0 0 4px rgba(54, 84, 61, 0.12);
   outline: none;
 }
 
