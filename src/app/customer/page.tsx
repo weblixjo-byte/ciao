@@ -117,9 +117,67 @@ const VAPID_KEY =
 export default function CustomerPage() {
   const { config, formatCurrency } = useBrand();
 
-  // State
-  const [loading, setLoading] = useState(true);
-  const [customer, setCustomer] = useState<CustomerData | null>(null);
+  // State: Synchronous cache & URL param check for instant 0ms mount
+  const [customer, setCustomer] = useState<CustomerData | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const authToken = params.get("auth_token");
+        const userId = params.get("user_id");
+        const name = params.get("name");
+
+        if (authToken) {
+          localStorage.setItem(CUSTOMER_TOKEN_KEY, authToken);
+        }
+        if (userId) {
+          localStorage.setItem(CUSTOMER_ID_KEY, userId);
+        }
+
+        // Instant pass construction if arriving from OAuth redirect
+        if (userId && name) {
+          const rawPin = params.get("pin") || "000000";
+          const formattedPin = `${rawPin.slice(0, 3)} - ${rawPin.slice(3, 6)}`;
+          const initialUser: CustomerData = {
+            id: userId,
+            name: decodeURIComponent(name),
+            email: params.get("email") ? decodeURIComponent(params.get("email")!) : undefined,
+            avatarUrl: params.get("avatar") ? decodeURIComponent(params.get("avatar")!) : undefined,
+            phone: params.get("phone") ? decodeURIComponent(params.get("phone")!) : undefined,
+            rawPin,
+            formattedPin,
+            qrSecret: params.get("qr") ? decodeURIComponent(params.get("qr")!) : userId,
+            pointsBalance: Number(params.get("points") || 0),
+            lifetimePoints: Number(params.get("points") || 0),
+            tier: ((params.get("tier") as any) || "Member") as "Member" | "Silver" | "Gold",
+            currencyValue: Number(((Number(params.get("points") || 0) / 100) * 1.0).toFixed(3)),
+            currency: "JOD",
+          };
+          localStorage.setItem(CUSTOMER_CACHE_KEY, JSON.stringify(initialUser));
+          return initialUser;
+        }
+
+        const cached = localStorage.getItem(CUSTOMER_CACHE_KEY);
+        if (cached) {
+          return JSON.parse(cached);
+        }
+      } catch (e) {
+        console.warn("Synchronous cache parse notice:", e);
+      }
+    }
+    return null;
+  });
+
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const hasAuth = params.get("auth_token") || localStorage.getItem(CUSTOMER_TOKEN_KEY);
+      const cached = localStorage.getItem(CUSTOMER_CACHE_KEY);
+      if (hasAuth && !cached) return true;
+      if (cached) return false;
+    }
+    return true;
+  });
+
   const [transactions, setTransactions] = useState<TransactionItem[]>([]);
   const [rewards, setRewards] = useState<RewardItem[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -154,10 +212,22 @@ export default function CustomerPage() {
   const getAuthHeaders = (): Record<string, string> => {
     const headers: Record<string, string> = {};
     if (typeof window !== "undefined") {
-      const savedToken = localStorage.getItem(CUSTOMER_TOKEN_KEY);
-      const savedId = localStorage.getItem(CUSTOMER_ID_KEY);
-      if (savedToken) headers["x-customer-auth"] = savedToken;
-      if (savedId) headers["x-customer-id"] = savedId;
+      let savedToken = localStorage.getItem(CUSTOMER_TOKEN_KEY);
+      let savedId = localStorage.getItem(CUSTOMER_ID_KEY);
+      const params = new URLSearchParams(window.location.search);
+      if (!savedToken && params.get("auth_token")) {
+        savedToken = params.get("auth_token");
+      }
+      if (!savedId && params.get("user_id")) {
+        savedId = params.get("user_id");
+      }
+      if (savedToken) {
+        headers["x-customer-auth"] = savedToken;
+        headers["Authorization"] = `Bearer ${savedToken}`;
+      }
+      if (savedId) {
+        headers["x-customer-id"] = savedId;
+      }
     }
     return headers;
   };
@@ -188,16 +258,26 @@ export default function CustomerPage() {
           if (data.transactions) {
             localStorage.setItem(TRANSACTIONS_CACHE_KEY, JSON.stringify(data.transactions));
           }
+
+          // Clean URL params if arriving from OAuth redirect
+          const url = new URL(window.location.href);
+          if (url.searchParams.has("auth_token")) {
+            url.searchParams.delete("auth_token");
+            url.searchParams.delete("user_id");
+            url.searchParams.delete("name");
+            url.searchParams.delete("email");
+            url.searchParams.delete("phone");
+            url.searchParams.delete("pin");
+            url.searchParams.delete("qr");
+            url.searchParams.delete("points");
+            url.searchParams.delete("tier");
+            url.searchParams.delete("avatar");
+            window.history.replaceState({}, document.title, url.pathname + (url.search || ""));
+          }
         }
       } else {
-        if (
-          typeof window !== "undefined" &&
-          !localStorage.getItem(CUSTOMER_ID_KEY) &&
-          !localStorage.getItem(CUSTOMER_TOKEN_KEY) &&
-          !localStorage.getItem(CUSTOMER_CACHE_KEY)
-        ) {
-          setCustomer(null);
-        }
+        // If query failed temporarily on server, keep existing customer state intact to guarantee zero flickering and stable pass display
+        console.warn("Dashboard background sync notice:", res.status);
       }
     } catch (e) {
       console.warn("Dashboard sync notice:", e);
@@ -577,12 +657,15 @@ export default function CustomerPage() {
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  if (loading) {
+  if (loading && !customer) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAFBFA] flex items-center justify-center p-4">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-2 border-neutral-300 border-t-[#2C221E] animate-spin" />
-          <span className="text-xs font-mono text-neutral-500">Loading your loyalty pass...</span>
+          <div className="w-12 h-12 rounded-2xl bg-white border border-neutral-200 shadow-xs p-1 object-contain flex items-center justify-center overflow-hidden animate-pulse">
+            <img src="/logo.png" alt={config.storeName || "ciao ciao"} className="w-full h-full object-contain" />
+          </div>
+          <div className="w-6 h-6 rounded-full border-2 border-neutral-200 border-t-[#426E49] animate-spin" />
+          <span className="text-xs font-semibold font-sans text-neutral-600">Loading your loyalty pass...</span>
         </div>
       </div>
     );

@@ -61,39 +61,44 @@ export async function connectDB(): Promise<{ isMongoose: boolean }> {
     return { isMongoose: false };
   }
 
-  if (cached.conn) {
-    return { isMongoose: !cached.isFallback };
+  // If already connected and active, return immediately
+  if (mongoose.connection.readyState === 1) {
+    cached.isFallback = false;
+    return { isMongoose: true };
   }
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false,
-      serverSelectionTimeoutMS: 6000, // Balanced timeout for Atlas cloud connection
+      bufferCommands: true, // Allow commands to buffer safely while connection handshakes
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
     };
 
     cached.promise = mongoose
       .connect(uri, opts)
       .then((mongooseInstance) => {
         cached.isFallback = false;
-        // Check if DB needs seeding
+        cached.conn = mongooseInstance;
         initMongoData();
         return mongooseInstance;
       })
       .catch((err) => {
-        console.warn(
-          "MongoDB connection unavailable. Using high-fidelity resilient in-memory data store:",
-          err.message
-        );
-        cached.isFallback = true;
-        return mongoose;
+        console.error("MongoDB connection exception:", err.message);
+        cached.promise = null;
+        cached.conn = null;
+        throw err;
       });
   }
 
   try {
     cached.conn = await cached.promise;
-    return { isMongoose: !cached.isFallback };
-  } catch {
-    cached.isFallback = true;
+    cached.isFallback = false;
+    return { isMongoose: true };
+  } catch (err: any) {
+    cached.promise = null;
+    cached.conn = null;
+    console.warn("Connection attempt reset for next request:", err.message);
     return { isMongoose: false };
   }
 }

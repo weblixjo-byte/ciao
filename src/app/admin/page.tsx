@@ -361,18 +361,24 @@ export default function AdminPage() {
 
   const t = i18n.en;
 
+  // Staff auth headers helper for rock-solid session persistence
+  const getStaffAuthHeaders = (): Record<string, string> => {
+    const headers: Record<string, string> = {};
+    if (typeof window !== "undefined") {
+      const savedToken = localStorage.getItem(ADMIN_TOKEN_KEY);
+      if (savedToken) {
+        headers["x-staff-auth"] = savedToken;
+        headers["Authorization"] = `Bearer ${savedToken}`;
+      }
+    }
+    return headers;
+  };
+
   // Check Admin Session with dual persistence
   const checkAdminSession = async () => {
     try {
       setLoadingSession(true);
-      const headers: Record<string, string> = {};
-      if (typeof window !== "undefined") {
-        const savedToken = localStorage.getItem(ADMIN_TOKEN_KEY);
-        if (savedToken) {
-          headers["x-staff-auth"] = savedToken;
-          headers["Authorization"] = `Bearer ${savedToken}`;
-        }
-      }
+      const headers = getStaffAuthHeaders();
       const res = await fetch("/api/auth/me", {
         headers,
         credentials: "include",
@@ -400,7 +406,8 @@ export default function AdminPage() {
   const loadMetrics = async () => {
     try {
       setLoadingMetrics(true);
-      const res = await fetch("/api/admin/analytics");
+      const headers = getStaffAuthHeaders();
+      const res = await fetch("/api/admin/analytics", { headers, credentials: "include" });
       const data = await res.json();
       if (data.success) {
         setMetrics(data.metrics);
@@ -415,7 +422,8 @@ export default function AdminPage() {
   // Load Rewards
   const loadRewards = async () => {
     try {
-      const res = await fetch("/api/admin/rewards");
+      const headers = getStaffAuthHeaders();
+      const res = await fetch("/api/admin/rewards", { headers, credentials: "include" });
       const data = await res.json();
       if (data.success) setRewardsList(data.rewards);
     } catch (e) {
@@ -426,7 +434,8 @@ export default function AdminPage() {
   // Load Cashiers
   const loadCashiers = async () => {
     try {
-      const res = await fetch("/api/admin/cashiers");
+      const headers = getStaffAuthHeaders();
+      const res = await fetch("/api/admin/cashiers", { headers, credentials: "include" });
       const data = await res.json();
       if (data.success) setCashiersList(data.cashiers);
     } catch (e) {
@@ -438,7 +447,8 @@ export default function AdminPage() {
   const loadCustomers = async () => {
     try {
       setLoadingCustomers(true);
-      const res = await fetch("/api/admin/customers");
+      const headers = getStaffAuthHeaders();
+      const res = await fetch("/api/admin/customers", { headers, credentials: "include" });
       const data = await res.json();
       if (data.success) setCustomersList(data.customers);
     } catch (e) {
