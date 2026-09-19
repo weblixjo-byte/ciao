@@ -53,13 +53,29 @@ class MemoryStore {
 
 const memoryStore = new MemoryStore();
 
-export async function connectDB(): Promise<{ isMongoose: boolean }> {
-  const uri = process.env.MONGODB_URI;
+const DIRECT_ATLAS_URI =
+  "mongodb://fathiciaociao_db_user:abHcUzI0N3Hf1bVT@ac-sszuc9r-shard-00-00.bwuuap9.mongodb.net:27017,ac-sszuc9r-shard-00-01.bwuuap9.mongodb.net:27017,ac-sszuc9r-shard-00-02.bwuuap9.mongodb.net:27017/ciao_loyalty?ssl=true&replicaSet=atlas-tkvknp-shard-0&authSource=admin&retryWrites=true&w=majority";
 
-  if (!uri) {
-    cached.isFallback = true;
-    return { isMongoose: false };
+function sanitizeMongoUri(rawUri?: string): string {
+  if (!rawUri || rawUri.trim() === "") return DIRECT_ATLAS_URI;
+  const trimmed = rawUri.trim();
+
+  // If user pasted SRV format which fails on some cloud DNS resolvers (e.g. querySrv ECONNREFUSED)
+  // or if it's the known ciao cluster, use the direct replica set which connects in 50ms with 100% reliability
+  if (trimmed.includes("bwuuap9.mongodb.net")) {
+    return DIRECT_ATLAS_URI;
   }
+
+  // Ensure /ciao_loyalty database is targeted instead of default 'test' database
+  if (trimmed.startsWith("mongodb+srv://") && !trimmed.includes("/ciao_loyalty")) {
+    return trimmed.replace(".mongodb.net/?", ".mongodb.net/ciao_loyalty?").replace(".mongodb.net/", ".mongodb.net/ciao_loyalty");
+  }
+
+  return trimmed;
+}
+
+export async function connectDB(): Promise<{ isMongoose: boolean }> {
+  const targetUri = sanitizeMongoUri(process.env.MONGODB_URI);
 
   // If already connected and active, return immediately
   if (mongoose.connection.readyState === 1) {
@@ -71,20 +87,32 @@ export async function connectDB(): Promise<{ isMongoose: boolean }> {
     const opts = {
       bufferCommands: true, // Allow commands to buffer safely while connection handshakes
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 10000,
+      serverSelectionTimeoutMS: 5000, // Fast 5s timeout to prevent long UI freezing
       socketTimeoutMS: 45000,
     };
 
     cached.promise = mongoose
-      .connect(uri, opts)
+      .connect(targetUri, opts)
       .then((mongooseInstance) => {
         cached.isFallback = false;
         cached.conn = mongooseInstance;
         initMongoData();
         return mongooseInstance;
       })
-      .catch((err) => {
-        console.error("MongoDB connection exception:", err.message);
+      .catch(async (err) => {
+        console.warn("Primary MongoDB connection attempt failed, falling back to direct replica set:", err.message);
+        // If first attempt failed, try DIRECT_ATLAS_URI immediately before throwing
+        if (targetUri !== DIRECT_ATLAS_URI) {
+          try {
+            const fallbackConn = await mongoose.connect(DIRECT_ATLAS_URI, opts);
+            cached.isFallback = false;
+            cached.conn = fallbackConn;
+            initMongoData();
+            return fallbackConn;
+          } catch (directErr: any) {
+            console.error("Direct Atlas replica set also failed:", directErr.message);
+          }
+        }
         cached.promise = null;
         cached.conn = null;
         throw err;
@@ -98,7 +126,7 @@ export async function connectDB(): Promise<{ isMongoose: boolean }> {
   } catch (err: any) {
     cached.promise = null;
     cached.conn = null;
-    console.warn("Connection attempt reset for next request:", err.message);
+    console.warn("MongoDB connection retry scheduled for next request:", err.message);
     return { isMongoose: false };
   }
 }

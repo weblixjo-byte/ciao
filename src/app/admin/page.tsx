@@ -263,8 +263,24 @@ export default function AdminPage() {
   // Authentication State with permanent dual persistence
   const ADMIN_CACHE_KEY = "ciao_admin_cached";
   const ADMIN_TOKEN_KEY = "ciao_admin_token";
-  const [admin, setAdmin] = useState<{ id: string; name: string; email: string } | null>(null);
-  const [loadingSession, setLoadingSession] = useState(true);
+  const [admin, setAdmin] = useState<{ id: string; name: string; email: string } | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem(ADMIN_CACHE_KEY);
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return null;
+  });
+  const [loadingSession, setLoadingSession] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem(ADMIN_CACHE_KEY);
+        if (cached) return false;
+      } catch {}
+    }
+    return true;
+  });
 
   // Login Form State
   const [emailInput, setEmailInput] = useState("");
@@ -375,9 +391,9 @@ export default function AdminPage() {
   };
 
   // Check Admin Session with dual persistence
-  const checkAdminSession = async () => {
+  const checkAdminSession = async (silent: boolean = false) => {
     try {
-      setLoadingSession(true);
+      if (!silent) setLoadingSession(true);
       const headers = getStaffAuthHeaders();
       const res = await fetch("/api/auth/me", {
         headers,
@@ -459,18 +475,20 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
+    let hasCached = false;
     try {
       if (typeof window !== "undefined") {
         const cachedAdmin = localStorage.getItem(ADMIN_CACHE_KEY);
         if (cachedAdmin) {
           setAdmin(JSON.parse(cachedAdmin));
           setLoadingSession(false);
+          hasCached = true;
         }
       }
     } catch (e) {
       console.warn("Admin cache read error:", e);
     }
-    checkAdminSession();
+    checkAdminSession(hasCached);
   }, []);
 
   useEffect(() => {
