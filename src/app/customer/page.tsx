@@ -21,6 +21,7 @@ import {
   CheckCheck,
   Smartphone,
   Phone,
+  Download,
 } from "lucide-react";
 
 // Official Google Multi-Color Icon
@@ -200,6 +201,10 @@ export default function CustomerPage() {
   const [pushLoading, setPushLoading] = useState(false);
   const [showIosInstallModal, setShowIosInstallModal] = useState(false);
   const [pushSuccessToast, setPushSuccessToast] = useState<string | null>(null);
+
+  // Android PWA 1-Click Install Prompt State
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showAndroidInstallBanner, setShowAndroidInstallBanner] = useState(false);
 
   // Ref to track last known points for real-time cashier credit detection
   const prevPointsRef = useRef<number | null>(null);
@@ -589,8 +594,16 @@ export default function CustomerPage() {
       setPushPermission("unsupported");
     }
 
+    // Capture Android native PWA install prompt event
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handleBeforeInstall);
+
     return () => {
       clearInterval(interval);
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
       if (typeof document !== "undefined") {
         document.removeEventListener("visibilitychange", handleVisibilityChange);
         window.removeEventListener("focus", handleVisibilityChange);
@@ -604,12 +617,74 @@ export default function CustomerPage() {
     return /iphone|ipad|ipod/.test(ua);
   };
 
+  const isAndroidDevice = (): boolean => {
+    if (typeof window === "undefined") return false;
+    const ua = window.navigator.userAgent.toLowerCase();
+    return /android/.test(ua);
+  };
+
   const isStandalone = (): boolean => {
     if (typeof window === "undefined") return false;
     return (
       ("standalone" in window.navigator && (window.navigator as any).standalone) ||
       window.matchMedia("(display-mode: standalone)").matches
     );
+  };
+
+  // Trigger Android 1-Click Install Banner only after Google login + phone onboarding is complete
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Strictly Android only
+    if (!isAndroidDevice()) return;
+
+    // Skip if already installed / running in standalone mode
+    if (isStandalone()) return;
+
+    // Native install event must be captured
+    if (!deferredPrompt) return;
+
+    // Customer must be logged in with phone number completed
+    if (!customer || !customer.phone || customer.phone.trim() === "" || customer.phone === "undefined") {
+      return;
+    }
+
+    // Never show again if already seen or dismissed
+    const alreadySeen = localStorage.getItem("pwa_android_install_prompt_seen");
+    if (alreadySeen === "true") return;
+
+    // Graceful 1.5s delay after phone onboarding completes
+    const timer = setTimeout(() => {
+      setShowAndroidInstallBanner(true);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [customer, deferredPrompt]);
+
+  const handleInstallAndroidApp = async () => {
+    if (!deferredPrompt) return;
+    try {
+      await deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if (choice?.outcome === "accepted") {
+        confetti({ particleCount: 50, spread: 60 });
+      }
+    } catch (err) {
+      console.warn("PWA install error:", err);
+    } finally {
+      setDeferredPrompt(null);
+      setShowAndroidInstallBanner(false);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("pwa_android_install_prompt_seen", "true");
+      }
+    }
+  };
+
+  const handleDismissAndroidBanner = () => {
+    setShowAndroidInstallBanner(false);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("pwa_android_install_prompt_seen", "true");
+    }
   };
 
 
@@ -1826,6 +1901,67 @@ export default function CustomerPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* FLOATING ANDROID 1-CLICK INSTALL BANNER (Android only, shown once after Google Login + Phone link) */}
+      {showAndroidInstallBanner && (
+        <aside
+          aria-label="Install App"
+          className="fixed bottom-22 left-4 right-4 max-w-md mx-auto z-40 animate-in slide-in-from-bottom-5 fade-in duration-300"
+        >
+          <div className="glass-panel border-2 border-[#36543D]/30 shadow-2xl rounded-2xl p-4 bg-white/95 backdrop-blur-md relative overflow-hidden">
+            {/* Subtle brand ambient glow */}
+            <div className="absolute -top-8 -right-8 w-24 h-24 bg-[#36543D]/10 rounded-full blur-xl pointer-events-none" />
+
+            <div className="flex items-center gap-3">
+              {/* App Icon */}
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#36543D] to-[#243B2B] text-white flex items-center justify-center shrink-0 shadow-md shadow-[#36543D]/20">
+                <Download className="w-5 h-5 text-white animate-bounce" />
+              </div>
+
+              {/* Information */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold text-neutral-900 truncate font-sans">
+                    Install {config.storeName} App
+                  </h4>
+                  <span className="px-1.5 py-0.5 rounded-sm bg-emerald-100 text-emerald-800 text-[9px] font-semibold font-mono uppercase">
+                    1-Tap
+                  </span>
+                </div>
+                <p className="text-[11px] text-neutral-500 truncate font-sans mt-0.5">
+                  Add to home screen for instant 1-second access
+                </p>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={handleDismissAndroidBanner}
+                className="p-1 rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer shrink-0"
+                title="Dismiss"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Actions */}
+            <div className="mt-3 flex items-center gap-2">
+              <button
+                onClick={handleInstallAndroidApp}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-[#36543D] hover:bg-[#2A4330] active:scale-98 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer font-sans"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Install Now</span>
+              </button>
+              <button
+                onClick={handleDismissAndroidBanner}
+                className="py-2.5 px-3 rounded-xl bg-neutral-100 hover:bg-neutral-200/80 active:scale-98 text-neutral-600 text-xs font-medium transition-colors cursor-pointer font-sans"
+              >
+                Not now
+              </button>
+            </div>
+          </div>
+        </aside>
       )}
     </div>
   );
