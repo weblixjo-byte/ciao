@@ -43,6 +43,7 @@ self.addEventListener('push', (event) => {
     badge: data.badge || '/icon-192.png',
     vibrate: [200, 100, 200],
     renotify: true,
+    requireInteraction: true,
     data: {
       url: targetUrl,
       time: Date.now(),
