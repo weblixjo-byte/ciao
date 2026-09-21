@@ -55,7 +55,11 @@ export async function sendWebPushToSubscriptions(
               auth: sub.keys.auth,
             },
           },
-          payloadString
+          payloadString,
+          {
+            TTL: 86400,
+            urgency: "high",
+          }
         );
         sentCount++;
       } catch (err: any) {

@@ -351,6 +351,16 @@ export default function CustomerPage() {
         prevPointsRef.current = data.customer.pointsBalance;
         setCustomer(data.customer);
         setTransactions(data.transactions || []);
+        if (data.notifications) {
+          const items: NotificationItem[] = data.notifications;
+          setNotifications(items);
+          const latestUnread = items.find((n) => !n.isRead);
+          if (latestUnread && latestUnread._id !== lastShownToastIdRef.current) {
+            lastShownToastIdRef.current = latestUnread._id;
+            setActiveToastNotification(latestUnread);
+            setShowTopToast(true);
+          }
+        }
         if (typeof window !== "undefined") {
           localStorage.setItem(CUSTOMER_CACHE_KEY, JSON.stringify(data.customer));
           localStorage.setItem(CUSTOMER_ID_KEY, data.customer.id);

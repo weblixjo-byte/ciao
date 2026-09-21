@@ -69,6 +69,7 @@ export async function GET(req: Request) {
         discountPer100Pts: config.discountPer100Pts,
       },
       transactions: transactions.slice(0, 10),
+      notifications: notifications.slice(0, 10),
       unreadNotificationsCount: unreadCount,
     });
 
