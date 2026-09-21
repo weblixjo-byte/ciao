@@ -527,13 +527,14 @@ export default function CustomerPage() {
     loadRewards();
     loadNotifications();
 
-    // Fast polling every 3 seconds for instant real-time sync with cashier POS
+    // Optimized visibility-aware polling every 5 seconds (Only runs when tab is active & visible)
     const interval = setInterval(() => {
-      loadDashboard();
-      loadNotifications();
-    }, 3000);
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        loadDashboard();
+      }
+    }, 5000);
 
-    // Instant refresh when user unlocks phone or switches back to tab
+    // Instant full refresh when user unlocks phone or switches back to tab
     const handleVisibilityChange = () => {
       if (typeof document !== "undefined" && document.visibilityState === "visible") {
         loadDashboard();
@@ -1559,7 +1560,10 @@ export default function CustomerPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab("rewards")}
+            onClick={() => {
+              setActiveTab("rewards");
+              loadRewards();
+            }}
             className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 cursor-pointer ${
               activeTab === "rewards"
                 ? "bg-[#36543D] text-white shadow-sm font-semibold scale-102"
