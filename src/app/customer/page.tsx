@@ -206,6 +206,11 @@ export default function CustomerPage() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showAndroidInstallBanner, setShowAndroidInstallBanner] = useState(false);
 
+  // Auto-Dismissing 6-Second Top Notification Toast State
+  const [showTopToast, setShowTopToast] = useState(false);
+  const [activeToastNotification, setActiveToastNotification] = useState<NotificationItem | null>(null);
+  const lastShownToastIdRef = useRef<string | null>(null);
+
   // Ref to track last known points for real-time cashier credit detection
   const prevPointsRef = useRef<number | null>(null);
 
@@ -408,7 +413,16 @@ export default function CustomerPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setNotifications(data.notifications || []);
+        const items: NotificationItem[] = data.notifications || [];
+        setNotifications(items);
+
+        // Find latest unread notification and trigger 6-second top toast if not already shown
+        const latestUnread = items.find((n) => !n.isRead);
+        if (latestUnread && latestUnread._id !== lastShownToastIdRef.current) {
+          lastShownToastIdRef.current = latestUnread._id;
+          setActiveToastNotification(latestUnread);
+          setShowTopToast(true);
+        }
       }
     } catch (e) {
       console.error(e);
@@ -662,6 +676,15 @@ export default function CustomerPage() {
     return () => clearTimeout(timer);
   }, [customer, deferredPrompt]);
 
+  // Auto-dismiss top notification toast after 6 seconds without marking as read
+  useEffect(() => {
+    if (!showTopToast) return;
+    const timer = setTimeout(() => {
+      setShowTopToast(false);
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [showTopToast, activeToastNotification]);
+
   const handleInstallAndroidApp = async () => {
     if (!deferredPrompt) return;
     try {
@@ -813,6 +836,7 @@ export default function CustomerPage() {
 
   const markAllRead = async () => {
     try {
+      setShowTopToast(false);
       const headers = getAuthHeaders();
       await fetch("/api/customer/notifications", { method: "POST", headers });
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
@@ -1053,31 +1077,49 @@ export default function CustomerPage() {
 
       {/* Main Container */}
       <main className="max-w-md mx-auto w-full px-4 pt-4 pb-32 flex-1">
-        {/* Real-time Notification Banner */}
-        {unreadCount > 0 && notifications.length > 0 && !notifications[0].isRead && activeTab !== "notifications" && (
+        {/* Auto-Dismissing 6-Second Top Notification Toast */}
+        {showTopToast && activeToastNotification && !activeToastNotification.isRead && activeTab !== "notifications" && (
           <div
-            onClick={() => {
-              setActiveTab("notifications");
-              markAllRead();
-            }}
-            className="mb-4 bg-[#36543D] text-white rounded-2xl p-3.5 shadow-md flex items-center justify-between gap-3 cursor-pointer hover:bg-[#2a4230] transition-all animate-in fade-in slide-in-from-top-2"
+            className="mb-4 bg-[#36543D] text-white rounded-2xl p-3.5 shadow-lg border border-white/10 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-300 relative overflow-hidden"
           >
-            <div className="flex items-center gap-2.5 min-w-0">
+            {/* Clickable body to open and read notification */}
+            <div
+              onClick={() => {
+                setActiveTab("notifications");
+                markAllRead();
+                setShowTopToast(false);
+              }}
+              className="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer"
+            >
               <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
-                <Bell className="w-4 h-4 text-white" />
+                <Bell className="w-4 h-4 text-white animate-bounce" />
               </div>
-              <div className="overflow-hidden">
+              <div className="overflow-hidden min-w-0 flex-1">
                 <p className="text-xs font-bold truncate text-white font-sans">
-                  {notifications[0].title}
+                  {activeToastNotification.title}
                 </p>
                 <p className="text-[11px] text-white/90 truncate font-sans">
-                  {notifications[0].message}
+                  {activeToastNotification.message}
                 </p>
               </div>
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-white/20 text-white shrink-0 font-sans hover:bg-white/30 transition-colors">
+                View
+              </span>
             </div>
-            <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-white/20 text-white shrink-0 font-sans">
-              View
-            </span>
+
+            {/* Quick mini dismiss 'X' button - does NOT mark notification as read */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowTopToast(false);
+              }}
+              className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0 ml-1"
+              title="Close notice"
+              aria-label="Close notification toast"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         )}
 
@@ -1600,7 +1642,7 @@ export default function CustomerPage() {
             <div className="relative">
               <Bell className="w-4 h-4 mb-0.5" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full bg-emerald-600 ring-2 ring-white" />
+                <span className="absolute -top-0.5 -right-1 w-2.5 h-2.5 rounded-full bg-red-600 ring-2 ring-white animate-pulse" />
               )}
             </div>
             <span className="text-[10px] tracking-tight font-medium">Alerts</span>
