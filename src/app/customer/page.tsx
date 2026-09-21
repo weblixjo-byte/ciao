@@ -351,15 +351,16 @@ export default function CustomerPage() {
         prevPointsRef.current = data.customer.pointsBalance;
         setCustomer(data.customer);
         setTransactions(data.transactions || []);
-        if (data.notifications) {
-          const items: NotificationItem[] = data.notifications;
-          setNotifications(items);
-          const latestUnread = items.find((n) => !n.isRead);
+        if (data.notifications && Array.isArray(data.notifications)) {
+          setNotifications(data.notifications);
+          const latestUnread = data.notifications.find((n: NotificationItem) => !n.isRead);
           if (latestUnread && latestUnread._id !== lastShownToastIdRef.current) {
             lastShownToastIdRef.current = latestUnread._id;
             setActiveToastNotification(latestUnread);
             setShowTopToast(true);
           }
+        } else if (data.unreadNotificationsCount !== undefined && data.unreadNotificationsCount > 0) {
+          loadNotifications();
         }
         if (typeof window !== "undefined") {
           localStorage.setItem(CUSTOMER_CACHE_KEY, JSON.stringify(data.customer));
@@ -626,9 +627,23 @@ export default function CustomerPage() {
     };
     window.addEventListener("beforeinstallprompt", handleBeforeInstall);
 
+    // Instant 0ms in-app sync when a Web Push notification arrives
+    const handleSwMessage = (event: MessageEvent) => {
+      if (event.data?.type === "PUSH_NOTIFICATION_RECEIVED") {
+        loadDashboard();
+        loadNotifications();
+      }
+    };
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.addEventListener("message", handleSwMessage);
+    }
+
     return () => {
       clearInterval(interval);
       window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
+      if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+        navigator.serviceWorker.removeEventListener("message", handleSwMessage);
+      }
       if (typeof document !== "undefined") {
         document.removeEventListener("visibilitychange", handleVisibilityChange);
         window.removeEventListener("focus", handleVisibilityChange);

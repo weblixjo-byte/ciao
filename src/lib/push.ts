@@ -57,8 +57,8 @@ export async function sendWebPushToSubscriptions(
           },
           payloadString,
           {
-            TTL: 86400,
             urgency: "high",
+            TTL: 86400,
           }
         );
         sentCount++;

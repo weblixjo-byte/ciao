@@ -51,18 +51,24 @@ self.addEventListener('push', (event) => {
     tag: data.tag || 'ciao-' + Date.now(),
   };
 
-  event.waitUntil(
-    self.registration.showNotification(title, options).catch((err) => {
-      console.warn('[SW] Full showNotification failed, falling back to minimal options:', err);
-      return self.registration.showNotification(title, {
-        body: options.body,
-        icon: '/icon-192.png',
-      }).catch((minimalErr) => {
-        // Ultimate fallback: plain title and body
-        return self.registration.showNotification(title, { body: options.body });
-      });
-    })
-  );
+  const broadcastPromise = self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+    clientList.forEach((client) => {
+      client.postMessage({ type: 'PUSH_NOTIFICATION_RECEIVED', payload: data });
+    });
+  }).catch(() => {});
+
+  const showNotificationPromise = self.registration.showNotification(title, options).catch((err) => {
+    console.warn('[SW] Full showNotification failed, falling back to minimal options:', err);
+    return self.registration.showNotification(title, {
+      body: options.body,
+      icon: '/icon-192.png',
+    }).catch((minimalErr) => {
+      // Ultimate fallback: plain title and body
+      return self.registration.showNotification(title, { body: options.body });
+    });
+  });
+
+  event.waitUntil(Promise.all([showNotificationPromise, broadcastPromise]));
 });
 
 // Handle notification click by opening the customer pass
