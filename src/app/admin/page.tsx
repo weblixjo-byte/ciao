@@ -9,7 +9,6 @@ import {
   Users,
   Send,
   Pizza,
-  DollarSign,
   TrendingUp,
   Award,
   Plus,
@@ -51,10 +50,8 @@ const i18n = {
     signOut: "Sign Out",
     home: "Cashier POS",
     analyticsTitle: "Executive Analytics & Metrics",
-    analyticsSubtitle: "Real-time overview of loyalty performance, financial volume, and member activity.",
+    analyticsSubtitle: "Real-time overview of loyalty performance, points flow, and member activity.",
     refreshData: "Refresh Data",
-    cardRevenue: "Total Revenue Volume",
-    cardRevenueSub: (txs: number) => `From ${txs} total transactions`,
     cardIssued: "Points Issued",
     cardIssuedSub: "Credited for store purchases",
     cardRedeemed: "Points Redeemed",
@@ -64,7 +61,7 @@ const i18n = {
     topCustomers: "Top Loyal Members",
     byLifetime: "Ranked by Lifetime Points",
     liveActivity: "Recent Activity Log",
-    auditTrail: "Financial & Loyalty Audit",
+    auditTrail: "Points & Loyalty Audit",
     noTransactions: "No recorded transactions yet.",
     pts: "pts",
     bal: "Bal",
@@ -156,10 +153,8 @@ const i18n = {
     signOut: "Sign Out",
     home: "Cashier POS",
     analyticsTitle: "Executive Analytics & Metrics",
-    analyticsSubtitle: "Real-time overview of loyalty performance, financial volume, and member activity.",
+    analyticsSubtitle: "Real-time overview of loyalty performance, points flow, and member activity.",
     refreshData: "Refresh Data",
-    cardRevenue: "Total Revenue Volume",
-    cardRevenueSub: (txs: number) => `From ${txs} total transactions`,
     cardIssued: "Points Issued",
     cardIssuedSub: "Credited for store purchases",
     cardRedeemed: "Points Redeemed",
@@ -169,7 +164,7 @@ const i18n = {
     topCustomers: "Top Loyal Members",
     byLifetime: "Ranked by Lifetime Points",
     liveActivity: "Recent Activity Log",
-    auditTrail: "Financial & Loyalty Audit",
+    auditTrail: "Points & Loyalty Audit",
     noTransactions: "No recorded transactions yet.",
     pts: "pts",
     bal: "Bal",
@@ -256,7 +251,7 @@ interface MetricsData {
 }
 
 export default function AdminPage() {
-  const { config, formatCurrency } = useBrand();
+  const { config } = useBrand();
 
   // Language State: English by default
   const [lang, setLang] = useState<"en" | "ar">("en");
@@ -1054,24 +1049,8 @@ export default function AdminPage() {
             </div>
 
             {/* Metrics Cards Grid - Clean Minimalist Luxury Glass */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Card 1: Revenue Volume */}
-              <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#36543D]/30">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-semibold text-neutral-500">{t.cardRevenue}</span>
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center">
-                    <DollarSign className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-2xl font-bold text-neutral-900 tracking-tight" dir="ltr">
-                  {formatCurrency(metrics?.totalRevenueVolume || 0)}
-                </div>
-                <span className="text-[11px] text-neutral-400 mt-1 block">
-                  {t.cardRevenueSub(metrics?.totalTransactions || 0)}
-                </span>
-              </div>
-
-              {/* Card 2: Points Issued */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Card 1: Points Issued */}
               <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#36543D]/30">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[11px] font-semibold text-neutral-500">{t.cardIssued}</span>
@@ -1087,7 +1066,7 @@ export default function AdminPage() {
                 </span>
               </div>
 
-              {/* Card 3: Points Redeemed */}
+              {/* Card 2: Points Redeemed */}
               <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#36543D]/30">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[11px] font-semibold text-neutral-500">{t.cardRedeemed}</span>
@@ -1103,7 +1082,7 @@ export default function AdminPage() {
                 </span>
               </div>
 
-              {/* Card 4: Active Customer Base */}
+              {/* Card 3: Active Customer Base */}
               <div className="glass-panel rounded-3xl p-5 sm:p-6 transition-all hover:shadow-md hover:border-[#36543D]/30">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[11px] font-semibold text-neutral-500">{t.cardMembers}</span>
