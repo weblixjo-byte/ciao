@@ -1746,7 +1746,6 @@ export default function AdminPage() {
         {activeTab === "support" && (
           <SupportTicketView
             adminName={admin.name}
-            adminEmail={admin.email}
             onReturnToDashboard={() => setActiveTab("analytics")}
           />
         )}

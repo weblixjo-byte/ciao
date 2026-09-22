@@ -9,13 +9,11 @@ import {
   ChevronDown,
   RotateCcw,
   Check,
-  Copy,
   AlertTriangle,
 } from "lucide-react";
 
 interface SupportTicketViewProps {
   adminName?: string;
-  adminEmail?: string;
   onReturnToDashboard?: () => void;
 }
 
@@ -59,12 +57,11 @@ const CATEGORIES = [
 
 export default function SupportTicketView({
   adminName = "Administrator",
-  adminEmail = "admin@ciao.com",
   onReturnToDashboard,
 }: SupportTicketViewProps) {
-  const [selectedCategory, setSelectedCategory] = useState<(typeof CATEGORIES)[number]>(
-    CATEGORIES[0]
-  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    (typeof CATEGORIES)[number]
+  >(CATEGORIES[0]);
   const [isCategoryOpen, setIsCategoryOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -75,9 +72,7 @@ export default function SupportTicketView({
   const [loading, setLoading] = useState<boolean>(false);
   const [successTicketId, setSuccessTicketId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [copiedTicketId, setCopiedTicketId] = useState<boolean>(false);
 
-  // Auto-captured live client diagnostics (attached silently to email)
   const [diagnostics, setDiagnostics] = useState<{
     deviceType: string;
     os: string;
@@ -91,7 +86,10 @@ export default function SupportTicketView({
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsCategoryOpen(false);
       }
     };
@@ -99,7 +97,7 @@ export default function SupportTicketView({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Collect diagnostics on mount
+  // Collect diagnostics silently on mount
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -107,7 +105,9 @@ export default function SupportTicketView({
     let deviceType = "Desktop Computer";
     if (/iPad|Tablet|(android(?!.*mobile))/i.test(ua)) {
       deviceType = "iPad / Tablet Device";
-    } else if (/Mobile|iPhone|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+    } else if (
+      /Mobile|iPhone|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)
+    ) {
       deviceType = "Mobile Device";
     }
 
@@ -120,7 +120,8 @@ export default function SupportTicketView({
 
     let browser = "Web Browser";
     if (/Chrome/i.test(ua) && !/Edg/i.test(ua)) browser = "Google Chrome";
-    else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = "Apple Safari";
+    else if (/Safari/i.test(ua) && !/Chrome/i.test(ua))
+      browser = "Apple Safari";
     else if (/Edg/i.test(ua)) browser = "Microsoft Edge";
     else if (/Firefox/i.test(ua)) browser = "Mozilla Firefox";
 
@@ -135,7 +136,9 @@ export default function SupportTicketView({
       jordanTime = new Date().toLocaleString();
     }
 
-    const viewport = `${window.innerWidth} x ${window.innerHeight} (DPR: ${window.devicePixelRatio || 1})`;
+    const viewport = `${window.innerWidth} x ${window.innerHeight} (DPR: ${
+      window.devicePixelRatio || 1
+    })`;
 
     setDiagnostics({
       deviceType,
@@ -189,11 +192,14 @@ export default function SupportTicketView({
       } else if (!data.canFallbackClient) {
         throw new Error(data.error || "Server processing failed");
       }
-    } catch (err: any) {
-      console.warn("Primary gateway notice, using Web3Forms direct fallback...", err);
+    } catch (err: unknown) {
+      console.warn(
+        "Primary gateway notice, using Web3Forms direct fallback...",
+        err
+      );
     }
 
-    // Gateway 2: Direct Client Fallback to Web3Forms (Guaranteed 100% Delivery Redundancy)
+    // Gateway 2: Direct Client Fallback to Web3Forms
     if (!submitted) {
       try {
         const directSubject = `[Ciao Support ${generatedId}] ${selectedCategory.title}: ${subject}`;
@@ -205,7 +211,6 @@ Ticket ID: ${generatedId}
 Category: ${selectedCategory.title}
 Admin / Branch Name: ${adminName}
 Contact Phone / WhatsApp: ${phone.trim() || "Not provided"}
-Destination Email: info@weblix-jo.com
 Reported Time: ${diagnostics?.localTime || new Date().toISOString()}
 
 --------------------------------------------------
@@ -261,9 +266,11 @@ Jordan Time: ${diagnostics?.localTime || "N/A"}
         } else {
           throw new Error(web3Data.message || "Web3Forms submission failed");
         }
-      } catch (clientErr: any) {
+      } catch (clientErr: unknown) {
+        const msg =
+          clientErr instanceof Error ? clientErr.message : String(clientErr);
         setErrorMessage(
-          clientErr.message ||
+          msg ||
             "Unable to transmit ticket. Please check your network connection or email info@weblix-jo.com directly."
         );
       }
@@ -292,65 +299,94 @@ Jordan Time: ${diagnostics?.localTime || "N/A"}
     setErrorMessage(null);
   };
 
-  const handleCopyTicket = () => {
-    if (!successTicketId) return;
-    navigator.clipboard.writeText(successTicketId);
-    setCopiedTicketId(true);
-    setTimeout(() => setCopiedTicketId(false), 2000);
-  };
-
-  // SUCCESS CONFIRMATION SCREEN
+  // ─── SUCCESS SCREEN ─────────────────────────────────────────────────────────
   if (successTicketId) {
     return (
-      <div className="max-w-2xl mx-auto py-8 px-4 animate-in fade-in zoom-in-95 duration-300">
-        <div className="bg-white border border-[#36543D]/20 rounded-3xl p-8 sm:p-10 shadow-lg text-center relative overflow-hidden">
-          <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-[#36543D] flex items-center justify-center mx-auto mb-5 shadow-xs">
-            <CheckCircle2 className="w-8 h-8 text-[#36543D]" />
+      <div className="max-w-xl mx-auto py-10 px-4 animate-in fade-in zoom-in-95 duration-300">
+        <div
+          className="glass-panel rounded-3xl p-8 sm:p-10 text-center relative overflow-hidden"
+          style={{ boxShadow: "0 12px 48px rgba(54,84,61,0.10)" }}
+        >
+          {/* Decorative glow */}
+          <div
+            className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(54,84,61,0.10) 0%, transparent 70%)",
+            }}
+          />
+
+          {/* Checkmark */}
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 relative z-10"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(54,84,61,0.12) 0%, rgba(212,226,212,0.3) 100%)",
+              border: "1.5px solid rgba(54,84,61,0.20)",
+            }}
+          >
+            <CheckCircle2 className="w-8 h-8" style={{ color: "#36543D" }} />
           </div>
 
-          <span className="text-xs font-bold uppercase tracking-widest text-[#36543D] bg-emerald-50 px-3 py-1 rounded-full inline-block mb-3 border border-emerald-200">
+          {/* Badge */}
+          <span
+            className="text-[10px] font-bold uppercase tracking-widest inline-block mb-3 px-3 py-1 rounded-full"
+            style={{
+              background: "rgba(54,84,61,0.08)",
+              color: "#36543D",
+              border: "1px solid rgba(54,84,61,0.15)",
+            }}
+          >
             Ticket Dispatched to Weblix
           </span>
 
-          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 mb-2 font-sans">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: "#141f16" }}>
             Support Ticket Registered
           </h2>
 
-          <p className="text-sm text-neutral-600 max-w-md mx-auto mb-6 leading-relaxed font-sans">
+          <p className="text-sm max-w-md mx-auto mb-8 leading-relaxed" style={{ color: "#6b7280" }}>
             Your incident report has been securely transmitted to{" "}
-            <span className="font-semibold text-neutral-900 font-mono">info@weblix-jo.com</span>.
-            Our engineering team will review the attached technical diagnostics and follow up
-            promptly.
+            <span className="font-semibold font-mono" style={{ color: "#36543D" }}>
+              info@weblix-jo.com
+            </span>
+            . Our engineering team will review the attached diagnostics and
+            follow up promptly.
           </p>
 
-          {/* Ticket Reference Badge */}
-          <div className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-neutral-50 border border-neutral-200 mb-8 max-w-xs w-full justify-between">
-            <div className="text-left">
-              <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-bold block">
-                Official Reference ID
+          {/* Ticket Reference */}
+          <div
+            className="inline-flex items-center gap-3 px-5 py-3.5 rounded-2xl mb-8 w-full max-w-xs justify-center"
+            style={{
+              background: "rgba(54,84,61,0.06)",
+              border: "1.5px solid rgba(54,84,61,0.15)",
+            }}
+          >
+            <div className="text-center">
+              <span
+                className="text-[10px] uppercase tracking-wider font-bold block mb-0.5"
+                style={{ color: "#9ca3af" }}
+              >
+                Reference ID
               </span>
-              <span className="font-mono text-lg font-bold text-[#36543D]">
+              <span
+                className="font-mono text-xl font-bold"
+                style={{ color: "#36543D" }}
+              >
                 {successTicketId}
               </span>
             </div>
-            <button
-              onClick={handleCopyTicket}
-              className="p-2 rounded-xl bg-white border border-neutral-200 text-neutral-600 hover:text-neutral-900 transition-colors cursor-pointer"
-              title="Copy Ticket ID"
-            >
-              {copiedTicketId ? (
-                <Check className="w-4 h-4 text-emerald-600" />
-              ) : (
-                <Copy className="w-4 h-4" />
-              )}
-            </button>
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               onClick={handleReset}
-              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-bold transition-all cursor-pointer active:scale-98 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 py-3 rounded-2xl text-xs font-bold transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2"
+              style={{
+                background: "rgba(54,84,61,0.07)",
+                color: "#36543D",
+                border: "1.5px solid rgba(54,84,61,0.15)",
+              }}
             >
               <RotateCcw className="w-4 h-4" />
               <span>Submit Another Ticket</span>
@@ -359,7 +395,8 @@ Jordan Time: ${diagnostics?.localTime || "N/A"}
             {onReturnToDashboard && (
               <button
                 onClick={onReturnToDashboard}
-                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-[#36543D] hover:bg-[#2a4230] text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-98 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-6 py-3 rounded-2xl text-white text-xs font-bold transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2"
+                style={{ background: "#36543D" }}
               >
                 <span>Return to Dashboard</span>
               </button>
@@ -370,66 +407,136 @@ Jordan Time: ${diagnostics?.localTime || "N/A"}
     );
   }
 
+  // ─── MAIN FORM ──────────────────────────────────────────────────────────────
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300 pb-16">
-      {/* Top Header Matching Screenshot (Left: LifeBuoy + Title/Subtitle, Right: Direct Line Badge) */}
+
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-1">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-[#36543D] text-white flex items-center justify-center shrink-0 shadow-xs">
-            <LifeBuoy className="w-6 h-6" />
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+            style={{
+              background: "linear-gradient(135deg, #36543D 0%, #4a7253 100%)",
+              boxShadow: "0 4px 16px rgba(54,84,61,0.25)",
+            }}
+          >
+            <LifeBuoy className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 font-sans tracking-tight leading-snug">
-              Technical Support & Issue Tickets
+            <h1
+              className="text-xl sm:text-2xl font-bold tracking-tight leading-snug"
+              style={{ color: "#141f16" }}
+            >
+              Technical Support &amp; Issue Tickets
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-500 font-sans mt-0.5 leading-normal">
-              Submit bugs, POS glitches, or technical requests directly to the engineering team.
+            <p className="text-xs sm:text-sm mt-0.5 leading-normal" style={{ color: "#9ca3af" }}>
+              Submit bugs, POS glitches, or technical requests directly to the
+              engineering team.
             </p>
           </div>
         </div>
 
+        {/* Direct Line Badge */}
         <div className="self-start sm:self-center shrink-0">
-          <div className="px-3.5 py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200/80 flex items-center gap-2 shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-xs font-mono font-medium text-emerald-900">
+          <div
+            className="px-3.5 py-1.5 rounded-full flex items-center gap-2"
+            style={{
+              background: "rgba(54,84,61,0.07)",
+              border: "1px solid rgba(54,84,61,0.15)",
+            }}
+          >
+            <span
+              className="w-2 h-2 rounded-full shrink-0"
+              style={{
+                background: "#36543D",
+                boxShadow: "0 0 0 3px rgba(54,84,61,0.15)",
+                animation: "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite",
+              }}
+            />
+            <span
+              className="text-xs font-mono font-medium"
+              style={{ color: "#36543D" }}
+            >
               Direct Line: info@weblix-jo.com
             </span>
           </div>
         </div>
       </div>
 
-      {/* Main Form Card Matching Screenshot Exactly with Ciao Brand Color Theme */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-neutral-200/90 p-6 sm:p-8 md:p-10 shadow-xs space-y-6">
-        {/* Field 1: ISSUE CATEGORY */}
+      {/* ── Form Card ──────────────────────────────────────────────────────── */}
+      <form
+        onSubmit={handleSubmit}
+        className="glass-panel rounded-3xl p-6 sm:p-8 md:p-10 space-y-6"
+      >
+        {/* ── Field 1: ISSUE CATEGORY ─────────────────────────────────────── */}
         <div>
-          <label className="block text-[11px] font-bold tracking-wider uppercase text-neutral-600 mb-2 font-sans">
-            ISSUE CATEGORY
+          <label
+            className="block text-[11px] font-bold tracking-widest uppercase mb-2.5"
+            style={{ color: "#6b7280" }}
+          >
+            Issue Category
           </label>
 
           <div ref={dropdownRef} className="relative">
+            {/* Trigger Button */}
             <button
               type="button"
               onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-              className="w-full px-4 py-3.5 rounded-2xl border border-neutral-200/90 bg-white hover:bg-neutral-50/40 text-left flex items-center justify-between transition-all focus:border-[#36543D] focus:ring-2 focus:ring-[#36543D]/20 outline-none cursor-pointer"
+              className="w-full text-left flex items-center justify-between transition-all cursor-pointer outline-none"
+              style={{
+                background: isCategoryOpen
+                  ? "rgba(255,255,255,0.96)"
+                  : "rgba(255,255,255,0.75)",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+                border: isCategoryOpen
+                  ? "1.5px solid #36543D"
+                  : "1.5px solid rgba(212,226,212,0.85)",
+                borderRadius: "1rem",
+                padding: "0.85rem 1rem",
+                boxShadow: isCategoryOpen
+                  ? "0 0 0 4px rgba(54,84,61,0.10), 0 4px 16px rgba(54,84,61,0.08)"
+                  : "0 2px 8px -2px rgba(54,84,61,0.05)",
+              }}
             >
-              <div className="truncate flex items-baseline gap-2">
-                <span className="text-sm font-semibold text-neutral-900 font-sans">
+              <div className="flex items-baseline gap-2 truncate">
+                <span
+                  className="text-sm font-semibold truncate"
+                  style={{ color: "#141f16" }}
+                >
                   {selectedCategory.title}
                 </span>
-                <span className="text-xs text-neutral-400 font-mono hidden sm:inline truncate">
+                <span
+                  className="text-xs font-mono hidden sm:inline truncate"
+                  style={{ color: "#9ca3af" }}
+                >
                   {selectedCategory.desc}
                 </span>
               </div>
               <ChevronDown
-                className={`w-4 h-4 text-neutral-400 shrink-0 transition-transform duration-200 ${
-                  isCategoryOpen ? "rotate-180 text-[#36543D]" : ""
-                }`}
+                className="w-4 h-4 shrink-0 ml-2 transition-transform duration-200"
+                style={{
+                  color: isCategoryOpen ? "#36543D" : "#9ca3af",
+                  transform: isCategoryOpen ? "rotate(180deg)" : "rotate(0deg)",
+                }}
               />
             </button>
 
-            {/* Custom Dropdown Menu */}
+            {/* Glass Floating Dropdown Menu */}
             {isCategoryOpen && (
-              <div className="absolute top-full left-0 right-0 mt-1.5 bg-white border border-neutral-200 rounded-2xl shadow-xl z-30 py-1.5 max-h-72 overflow-y-auto animate-in fade-in duration-150">
+              <div
+                className="absolute top-full left-0 right-0 mt-1.5 z-30 py-1.5 max-h-72 overflow-y-auto animate-in fade-in duration-150"
+                style={{
+                  background: "rgba(255,255,255,0.94)",
+                  backdropFilter: "blur(24px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                  border: "1.5px solid rgba(212,226,212,0.85)",
+                  borderRadius: "1rem",
+                  boxShadow:
+                    "0 16px 48px rgba(54,84,61,0.14), 0 4px 16px rgba(0,0,0,0.05)",
+                }}
+              >
                 {CATEGORIES.map((cat) => {
                   const isSelected = selectedCategory.id === cat.id;
                   return (
@@ -440,18 +547,45 @@ Jordan Time: ${diagnostics?.localTime || "N/A"}
                         setSelectedCategory(cat);
                         setIsCategoryOpen(false);
                       }}
-                      className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors cursor-pointer ${
-                        isSelected
-                          ? "bg-emerald-50/70 text-[#36543D]"
-                          : "hover:bg-neutral-50 text-neutral-800"
-                      }`}
+                      className="w-full px-4 py-3 text-left flex items-center justify-between transition-colors cursor-pointer"
+                      style={{
+                        background: isSelected
+                          ? "rgba(54,84,61,0.07)"
+                          : "transparent",
+                        borderRadius: "0.625rem",
+                        margin: "0 0.25rem",
+                        width: "calc(100% - 0.5rem)",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected)
+                          (e.currentTarget as HTMLButtonElement).style.background =
+                            "rgba(54,84,61,0.04)";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected)
+                          (e.currentTarget as HTMLButtonElement).style.background =
+                            "transparent";
+                      }}
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                        <span className="text-sm font-semibold font-sans">{cat.title}</span>
-                        <span className="text-xs text-neutral-400 font-mono">{cat.desc}</span>
+                        <span
+                          className="text-sm font-semibold"
+                          style={{ color: isSelected ? "#36543D" : "#141f16" }}
+                        >
+                          {cat.title}
+                        </span>
+                        <span
+                          className="text-xs font-mono"
+                          style={{ color: "#9ca3af" }}
+                        >
+                          {cat.desc}
+                        </span>
                       </div>
                       {isSelected && (
-                        <Check className="w-4 h-4 text-[#36543D] shrink-0 ml-2" />
+                        <Check
+                          className="w-4 h-4 shrink-0 ml-2"
+                          style={{ color: "#36543D" }}
+                        />
                       )}
                     </button>
                   );
@@ -461,68 +595,106 @@ Jordan Time: ${diagnostics?.localTime || "N/A"}
           </div>
         </div>
 
-        {/* Field 2: SUBJECT / SUMMARY */}
+        {/* ── Field 2: SUBJECT / SUMMARY ───────────────────────────────────── */}
         <div>
-          <label className="block text-[11px] font-bold tracking-wider uppercase text-neutral-600 mb-2 font-sans">
-            SUBJECT / SUMMARY
+          <label
+            className="block text-[11px] font-bold tracking-widest uppercase mb-2.5"
+            style={{ color: "#6b7280" }}
+          >
+            Subject / Summary
           </label>
           <input
             type="text"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             placeholder="Brief summary of the issue or inquiry..."
-            className="w-full px-4 py-3.5 rounded-2xl border border-neutral-200/90 bg-white text-sm font-sans placeholder:text-neutral-400 text-neutral-900 focus:border-[#36543D] focus:ring-2 focus:ring-[#36543D]/20 outline-none transition-all"
+            className="glass-input w-full"
+            style={{ borderRadius: "1rem", padding: "0.85rem 1rem" }}
             required
           />
         </div>
 
-        {/* Field 3: DETAILED DESCRIPTION */}
+        {/* ── Field 3: DETAILED DESCRIPTION ────────────────────────────────── */}
         <div>
-          <label className="block text-[11px] font-bold tracking-wider uppercase text-neutral-600 mb-2 font-sans">
-            DETAILED DESCRIPTION
+          <label
+            className="block text-[11px] font-bold tracking-widest uppercase mb-2.5"
+            style={{ color: "#6b7280" }}
+          >
+            Detailed Description
           </label>
           <textarea
             rows={5}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Explain what happened in detail: steps to reproduce, customer PIN or reward code (if relevant), error messages, or what needs fixing..."
-            className="w-full px-4 py-3.5 rounded-2xl border border-neutral-200/90 bg-white text-sm font-sans placeholder:text-neutral-400 text-neutral-900 focus:border-[#36543D] focus:ring-2 focus:ring-[#36543D]/20 outline-none transition-all min-h-[140px] resize-y leading-relaxed"
+            className="glass-input w-full resize-y leading-relaxed"
+            style={{
+              borderRadius: "1rem",
+              padding: "0.85rem 1rem",
+              minHeight: "140px",
+            }}
             required
           />
         </div>
 
-        {/* Field 4: PHONE / WHATSAPP (OPTIONAL) */}
+        {/* ── Field 4: PHONE / WHATSAPP ─────────────────────────────────────── */}
         <div>
-          <label className="block text-[11px] font-bold tracking-wider uppercase text-neutral-600 mb-2 font-sans">
-            PHONE / WHATSAPP (OPTIONAL)
+          <label
+            className="block text-[11px] font-bold tracking-widest uppercase mb-2.5"
+            style={{ color: "#6b7280" }}
+          >
+            Phone / WhatsApp{" "}
+            <span className="normal-case font-normal" style={{ color: "#c4c4c4" }}>
+              (Optional)
+            </span>
           </label>
           <input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+962 7X XXX XXXX"
-            className="w-full px-4 py-3.5 rounded-2xl border border-neutral-200/90 bg-white text-sm font-sans placeholder:text-neutral-400 text-neutral-900 focus:border-[#36543D] focus:ring-2 focus:ring-[#36543D]/20 outline-none transition-all"
+            className="glass-input w-full"
+            style={{ borderRadius: "1rem", padding: "0.85rem 1rem" }}
           />
         </div>
 
-        {/* Error Notification */}
+        {/* ── Error Message ─────────────────────────────────────────────────── */}
         {errorMessage && (
-          <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
-            <p className="font-sans leading-relaxed">{errorMessage}</p>
+          <div
+            className="p-4 rounded-2xl flex items-center gap-2.5 text-xs leading-relaxed"
+            style={{
+              background: "rgba(239,68,68,0.06)",
+              border: "1px solid rgba(239,68,68,0.20)",
+              color: "#b91c1c",
+            }}
+          >
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            <p>{errorMessage}</p>
           </div>
         )}
 
-        {/* Card Footer Matching Screenshot (Left: Dispatched Notice, Right: Brand Olive Button) */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-neutral-100">
-          <span className="text-xs text-neutral-400 font-sans">
+        {/* ── Footer: Notice + Submit Button ───────────────────────────────── */}
+        <div
+          className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4"
+          style={{ borderTop: "1px solid rgba(212,226,212,0.6)" }}
+        >
+          <span className="text-xs" style={{ color: "#c4c4c4" }}>
             Dispatched directly to engineering team via Web3Forms.
           </span>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full sm:w-auto px-7 py-3 rounded-2xl bg-[#36543D] hover:bg-[#2a4230] text-white text-sm font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75 active:scale-98"
+            className="w-full sm:w-auto px-7 py-3 rounded-2xl text-white text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+            style={{
+              background: loading
+                ? "#4a7253"
+                : "linear-gradient(135deg, #36543D 0%, #4a7253 100%)",
+              boxShadow: loading
+                ? "none"
+                : "0 4px 16px rgba(54,84,61,0.30)",
+              opacity: loading ? 0.85 : 1,
+            }}
           >
             {loading ? (
               <div className="flex items-center gap-2.5">
