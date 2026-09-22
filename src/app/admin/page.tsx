@@ -1002,23 +1002,6 @@ export default function AdminPage() {
 
         {/* Sidebar Footer */}
         <div className="pt-4 border-t border-[#dce5dd]/60 space-y-3">
-          {/* Quick Persistent Support Ticket Action Button */}
-          <button
-            type="button"
-            onClick={() => setActiveTab("support")}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
-              activeTab === "support"
-                ? "bg-[#36543D] text-white border-[#36543D] shadow-xs"
-                : "bg-emerald-50/70 hover:bg-emerald-100/70 border-emerald-200/70 text-[#36543D]"
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <LifeBuoy className="w-4 h-4" />
-              <span>Support & Incidents</span>
-            </div>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          </button>
-
           <div className="px-2">
             <span className="text-xs font-semibold text-neutral-900 block truncate">
               {admin.name}
