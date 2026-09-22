@@ -5,7 +5,6 @@ import { QRCodeSVG } from "qrcode.react";
 import { useBrand } from "@/components/BrandProvider";
 import confetti from "canvas-confetti";
 import {
-  Copy,
   Check,
   Gift,
   History,
@@ -194,7 +193,6 @@ export default function CustomerPage() {
   const [rewards, setRewards] = useState<RewardItem[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [activeTab, setActiveTab] = useState<"card" | "rewards" | "history" | "notifications">("card");
-  const [copied, setCopied] = useState(false);
 
   // Web Push Notification State
   const [pushPermission, setPushPermission] = useState<"default" | "granted" | "denied" | "unsupported">("default");
@@ -785,24 +783,6 @@ export default function CustomerPage() {
     window.location.href = "/api/auth/google/login";
   };
 
-  // Copy 6-Digit PIN
-  const handleCopyPin = () => {
-    if (!customer?.rawPin) return;
-    navigator.clipboard.writeText(customer.rawPin);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  // Copy 8-Digit Combined Redemption Code (PIN + 2-digit reward code)
-  const handleCopyRedemptionCode = () => {
-    if (!customer?.rawPin || !redeemingReward) return;
-    const cleanPin = customer.rawPin.replace(/\D/g, "");
-    const code = `${cleanPin}-${redeemingReward.claimCode || "10"}`;
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   // Handle Google Sign-In & Sign-Up
   const handleGoogleAuth = async (profile: {
     name: string;
@@ -1277,29 +1257,11 @@ export default function CustomerPage() {
                   Fallback 6-Digit Counter PIN
                 </span>
 
-                <div className="flex items-center justify-center gap-3">
-                  <span className="font-pin text-2xl font-bold tracking-widest text-neutral-900 select-all">
+                <div className="flex items-center justify-center">
+                  <span className="font-pin text-2xl sm:text-3xl font-bold tracking-widest text-neutral-900 select-all">
                     {customer.formattedPin}
                   </span>
-
-                  <button
-                    onClick={handleCopyPin}
-                    className="p-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 transition-colors active:scale-95 cursor-pointer"
-                    title="Copy PIN"
-                  >
-                    {copied ? (
-                      <Check className="w-4 h-4 text-emerald-600" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
                 </div>
-
-                {copied && (
-                  <span className="text-[10px] font-sans text-[#36543D] font-semibold mt-1 block">
-                    Copied to clipboard!
-                  </span>
-                )}
               </div>
 
               {/* Live Points Counter */}
@@ -1733,27 +1695,11 @@ export default function CustomerPage() {
               <span className="text-[10px] uppercase tracking-wide font-sans font-semibold text-neutral-500 block mb-1">
                 Give this 8-Digit Code to Cashier
               </span>
-              <div className="flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto py-1">
+              <div className="flex items-center justify-center overflow-x-auto py-1">
                 <span className="font-pin text-2xl sm:text-3xl font-bold tracking-widest text-[#36543D] select-all whitespace-nowrap">
                   {customer.formattedPin} - {redeemingReward.claimCode || "10"}
                 </span>
-                <button
-                  onClick={handleCopyRedemptionCode}
-                  className="p-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-emerald-50 text-neutral-600 transition-colors active:scale-95 cursor-pointer shrink-0"
-                  title="Copy Redemption Code"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4 text-emerald-600" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </button>
               </div>
-              {copied && (
-                <span className="text-[10px] font-sans font-medium text-[#36543D] mt-1 block">
-                  Copied to clipboard!
-                </span>
-              )}
             </div>
 
             {/* QR Code Presentation */}
