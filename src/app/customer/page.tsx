@@ -85,6 +85,7 @@ interface RewardItem {
   pointsRequired: number;
   category: string;
   imageUrl?: string;
+  claimCode?: string;
   canRedeem: boolean;
 }
 
@@ -788,6 +789,16 @@ export default function CustomerPage() {
   const handleCopyPin = () => {
     if (!customer?.rawPin) return;
     navigator.clipboard.writeText(customer.rawPin);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Copy 8-Digit Combined Redemption Code (PIN + 2-digit reward code)
+  const handleCopyRedemptionCode = () => {
+    if (!customer?.rawPin || !redeemingReward) return;
+    const cleanPin = customer.rawPin.replace(/\D/g, "");
+    const code = `${cleanPin}-${redeemingReward.claimCode || "10"}`;
+    navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -1720,16 +1731,20 @@ export default function CustomerPage() {
             {/* Prominent Counter Code Box */}
             <div className="glass-panel-subtle border-2 border-[#36543D]/30 rounded-2xl p-4 mb-3 text-center shadow-xs">
               <span className="text-[10px] uppercase tracking-wide font-sans font-semibold text-neutral-500 block mb-1">
-                Give this 6-Digit Code to Cashier
+                Give this 8-Digit Code to Cashier
               </span>
-              <div className="flex items-center justify-center gap-3">
-                <span className="font-pin text-3xl font-bold tracking-widest text-[#36543D] select-all">
-                  {customer.formattedPin}
-                </span>
+              <div className="flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto py-1">
+                <div className="flex items-center justify-center gap-1 sm:gap-1.5 font-pin whitespace-nowrap text-xl sm:text-2xl font-bold tracking-wider text-[#36543D] select-all">
+                  <span>{customer.formattedPin}</span>
+                  <span className="text-neutral-400 font-normal">-</span>
+                  <span className="bg-[#36543D] text-[#F4EECF] px-2 sm:px-2.5 py-0.5 rounded-lg font-mono font-black text-lg sm:text-xl shadow-xs">
+                    {redeemingReward.claimCode || "10"}
+                  </span>
+                </div>
                 <button
-                  onClick={handleCopyPin}
-                  className="p-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-emerald-50 text-neutral-600 transition-colors active:scale-95 cursor-pointer"
-                  title="Copy PIN"
+                  onClick={handleCopyRedemptionCode}
+                  className="p-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-emerald-50 text-neutral-600 transition-colors active:scale-95 cursor-pointer shrink-0"
+                  title="Copy Redemption Code"
                 >
                   {copied ? (
                     <Check className="w-4 h-4 text-emerald-600" />
@@ -1749,7 +1764,7 @@ export default function CustomerPage() {
             <div className="flex flex-col items-center justify-center mb-4">
               <div className="p-2.5 bg-white rounded-xl border border-neutral-200 shadow-2xs">
                 <QRCodeSVG
-                  value={customer.qrSecret}
+                  value={`${customer.qrSecret}:CLAIM:${redeemingReward.claimCode || "10"}`}
                   size={120}
                   level="H"
                   includeMargin={false}
@@ -1757,7 +1772,7 @@ export default function CustomerPage() {
                 />
               </div>
               <span className="text-[10px] text-neutral-500 font-sans mt-1.5">
-                Or scan customer QR on POS terminal
+                Scan on POS terminal to redeem
               </span>
             </div>
 

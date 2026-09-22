@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { title, description, pointsRequired, category, stock, isActive, imageUrl } = body;
+    const { title, description, pointsRequired, category, stock, isActive, imageUrl, claimCode } = body;
 
     if (!title || !pointsRequired) {
       return NextResponse.json({ error: "Reward title and points required are needed" }, { status: 400 });
@@ -36,6 +36,7 @@ export async function POST(req: Request) {
       pointsRequired: Number(pointsRequired),
       category: category || "Drinks",
       imageUrl: imageUrl ? imageUrl.trim() : "",
+      claimCode: claimCode ? String(claimCode).trim() : undefined,
       stock: stock !== undefined ? Number(stock) : 999,
       isActive: isActive !== undefined ? Boolean(isActive) : true,
     });

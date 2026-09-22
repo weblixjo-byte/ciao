@@ -483,14 +483,22 @@ export const dbService = {
       try {
         const filter = activeOnly ? { isActive: true } : {};
         const list = await Reward.find(filter).sort({ pointsRequired: 1 }).lean();
-        return JSON.parse(JSON.stringify(list));
+        const parsed: IReward[] = JSON.parse(JSON.stringify(list));
+        return parsed.map((r, idx) => ({
+          ...r,
+          claimCode: r.claimCode || String(((idx * 7 + 11) % 90) + 10),
+        }));
       } catch (e) {
         console.warn(e);
       }
     }
     return memoryStore.rewards
       .filter((r) => (!activeOnly || r.isActive))
-      .sort((a, b) => a.pointsRequired - b.pointsRequired);
+      .sort((a, b) => a.pointsRequired - b.pointsRequired)
+      .map((r, idx) => ({
+        ...r,
+        claimCode: r.claimCode || String(((idx * 7 + 11) % 90) + 10),
+      }));
   },
 
   async findRewardById(id: string): Promise<IReward | null> {
@@ -507,7 +515,51 @@ export const dbService = {
     return found ? { ...found } : null;
   },
 
+  async findRewardByClaimCode(code: string, activeOnly: boolean = true): Promise<IReward | null> {
+    const cleanCode = String(code || "").trim();
+    if (!cleanCode) return null;
+
+    const { isMongoose } = await connectDB();
+    if (isMongoose) {
+      try {
+        const filter: any = { claimCode: cleanCode };
+        if (activeOnly) filter.isActive = true;
+        const r = await Reward.findOne(filter).sort({ pointsRequired: 1 }).lean();
+        if (r) return JSON.parse(JSON.stringify(r));
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    // Fallback search across all rewards (supporting auto-assigned fallback codes)
+    const all = await this.getRewards(activeOnly);
+    const matched = all.find((r) => r.claimCode === cleanCode);
+    return matched ? { ...matched } : null;
+  },
+
   async createReward(data: Partial<IReward>): Promise<IReward> {
+    // Generate unique 2-digit numeric claim code (10 to 99) with code recycling
+    const existing = await this.getRewards(false);
+    const usedCodes = new Set(existing.map((r) => r.claimCode).filter(Boolean));
+
+    let claimCode = data.claimCode ? String(data.claimCode).trim() : "";
+    if (!/^\d{2}$/.test(claimCode) || usedCodes.has(claimCode)) {
+      // Find all unused 2-digit numbers between 10 and 99
+      const available: string[] = [];
+      for (let i = 10; i <= 99; i++) {
+        const codeStr = String(i);
+        if (!usedCodes.has(codeStr)) {
+          available.push(codeStr);
+        }
+      }
+      if (available.length > 0) {
+        const randIdx = Math.floor(Math.random() * available.length);
+        claimCode = available[randIdx];
+      } else {
+        claimCode = String(Math.floor(10 + Math.random() * 90));
+      }
+    }
+
     const { isMongoose } = await connectDB();
     if (isMongoose) {
       try {
@@ -517,6 +569,7 @@ export const dbService = {
           pointsRequired: Number(data.pointsRequired) || 100,
           category: data.category || "Drinks",
           imageUrl: data.imageUrl || "",
+          claimCode,
           stock: data.stock !== undefined ? Number(data.stock) : 999,
           isActive: data.isActive !== undefined ? Boolean(data.isActive) : true,
           redemptionCount: 0,
@@ -534,6 +587,7 @@ export const dbService = {
       pointsRequired: data.pointsRequired || 100,
       category: data.category || "Drinks",
       imageUrl: data.imageUrl || "",
+      claimCode,
       isActive: data.isActive !== undefined ? data.isActive : true,
       stock: data.stock !== undefined ? data.stock : 999,
       redemptionCount: 0,

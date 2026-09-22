@@ -70,6 +70,7 @@ export interface IReward {
   imageUrl?: string;
   isActive: boolean;
   stock?: number;
+  claimCode?: string;
   redemptionCount?: number;
   createdAt: string | Date;
 }

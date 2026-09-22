@@ -303,6 +303,7 @@ export default function AdminPage() {
     pointsRequired: 100,
     category: "Drinks",
     imageUrl: "",
+    claimCode: "",
     stock: 999,
   });
   const [createRewardLoading, setCreateRewardLoading] = useState(false);
@@ -598,7 +599,7 @@ export default function AdminPage() {
       const data = await res.json();
       if (res.ok && data.success) {
         setShowAddRewardModal(false);
-        setNewReward({ title: "", description: "", pointsRequired: 100, category: "Drinks", imageUrl: "", stock: 999 });
+        setNewReward({ title: "", description: "", pointsRequired: 100, category: "Drinks", imageUrl: "", claimCode: "", stock: 999 });
         await loadRewards();
       } else {
         setCreateRewardError(data.error || "Failed to save reward. Please check required fields.");
@@ -1405,9 +1406,14 @@ export default function AdminPage() {
                           <span className="text-[10px] opacity-90 uppercase font-sans">pts</span>
                         </div>
 
-                        {/* Category Floating Badge */}
-                        <div className="absolute top-3 start-3 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-xs text-neutral-900 border border-neutral-200 text-[10px] font-semibold shadow-2xs">
-                          {reward.category}
+                        {/* Category & Claim Code Floating Badges */}
+                        <div className="absolute top-3 start-3 flex items-center gap-1.5">
+                          <span className="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-xs text-neutral-900 border border-neutral-200 text-[10px] font-semibold shadow-2xs">
+                            {reward.category}
+                          </span>
+                          <span className="px-2.5 py-1 rounded-full bg-neutral-900/90 backdrop-blur-xs text-[#F4EECF] border border-neutral-700 text-[10px] font-mono font-bold shadow-2xs">
+                            CODE: {reward.claimCode || "10"}
+                          </span>
                         </div>
                       </div>
 
@@ -1877,7 +1883,7 @@ export default function AdminPage() {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-3 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                 <div>
                   <label className="block text-xs font-semibold text-neutral-900 mb-1 font-sans">
                     {t.tblPointsCost} *
@@ -1908,6 +1914,25 @@ export default function AdminPage() {
                       { value: "Merchandise", label: "Merchandise" },
                       { value: "Special", label: "Special Offers" },
                     ]}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-900 mb-1 font-sans">
+                    Claim Code (2 Digits)
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={2}
+                    value={newReward.claimCode}
+                    onChange={(e) =>
+                      setNewReward({
+                        ...newReward,
+                        claimCode: e.target.value.replace(/\D/g, "").slice(0, 2),
+                      })
+                    }
+                    placeholder="Auto (e.g. 25)"
+                    className="glass-input w-full font-mono font-bold text-center"
                   />
                 </div>
               </div>

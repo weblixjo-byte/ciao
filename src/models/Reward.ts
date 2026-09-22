@@ -15,6 +15,7 @@ const RewardSchema = new Schema<RewardDocument>(
     imageUrl: { type: String, default: "" },
     isActive: { type: Boolean, default: true },
     stock: { type: Number, default: 999 },
+    claimCode: { type: String, default: "" },
     redemptionCount: { type: Number, default: 0 },
   },
   { timestamps: true }

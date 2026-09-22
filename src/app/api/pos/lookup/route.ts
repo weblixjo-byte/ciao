@@ -37,10 +37,26 @@ export async function POST(req: Request) {
     }
 
     let customer = null;
+    let targetClaimCode: string | null = null;
 
-    // 1. Try 6-digit PIN (strip spaces/dashes: "482 - 910" -> "482910")
+    // A. Check for QR Claim format: "${qrSecret}:CLAIM:${claimCode}"
+    if (cleaned.includes(":CLAIM:")) {
+      const parts = cleaned.split(":CLAIM:");
+      cleaned = (parts[0] || "").trim();
+      targetClaimCode = (parts[1] || "").trim();
+    }
+
+    // B. Check for 8-digit format (6-digit PIN + 2-digit Reward Code)
+    // Supports formats: "576-565-25", "576 565 25", "576565-25", "57656525"
     const digitsOnly = cleaned.replace(/\D/g, "");
-    if (digitsOnly.length === 6) {
+    if (!targetClaimCode && digitsOnly.length === 8) {
+      const pinPart = digitsOnly.substring(0, 6);
+      targetClaimCode = digitsOnly.substring(6, 8);
+      customer = await dbService.findUserByPin(pinPart);
+    }
+
+    // C. 1. Try 6-digit PIN if not already resolved
+    if (!customer && digitsOnly.length === 6) {
       customer = await dbService.findUserByPin(digitsOnly);
     }
 
@@ -55,7 +71,7 @@ export async function POST(req: Request) {
     }
 
     // 4. Try Phone number
-    if (!customer && digitsOnly.length >= 7) {
+    if (!customer && digitsOnly.length >= 7 && digitsOnly.length !== 8) {
       customer = await dbService.findUserByPhone(cleaned);
     }
 
@@ -66,9 +82,30 @@ export async function POST(req: Request) {
 
     if (!customer || customer.role !== "customer") {
       return NextResponse.json(
-        { error: "Customer not found. Verify the 6-digit PIN or scanned QR code." },
+        { error: "Customer not found. Verify the customer PIN or scanned QR code." },
         { status: 404 }
       );
+    }
+
+    // If a reward claim code was provided, look up the target reward
+    let pendingReward = null;
+    if (targetClaimCode) {
+      const reward = await dbService.findRewardByClaimCode(targetClaimCode, true);
+      if (!reward || reward.isActive === false) {
+        return NextResponse.json(
+          { error: `Reward code "${targetClaimCode}" not found or inactive. Verify the 2-digit reward code.` },
+          { status: 404 }
+        );
+      }
+      pendingReward = {
+        id: reward._id,
+        title: reward.title,
+        description: reward.description,
+        pointsRequired: reward.pointsRequired,
+        category: reward.category,
+        imageUrl: reward.imageUrl,
+        claimCode: reward.claimCode || targetClaimCode,
+      };
     }
 
     const config = await dbService.getConfig();
@@ -80,6 +117,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
+      mode: pendingReward ? "redeem" : "credit",
+      pendingReward,
       customer: {
         id: customer._id,
         name: customer.name,
