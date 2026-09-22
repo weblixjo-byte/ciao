@@ -2,25 +2,38 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { dbService } from "@/lib/db";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const session = await getSession();
-    const rewards = await dbService.getRewards(true);
-    let userPoints = 0;
+    const session = await getSession(req);
+    const rewardsPromise = dbService.getRewards(true);
+    let userPointsPromise: Promise<number> = Promise.resolve(0);
 
     if (session && session.role === "customer") {
-      const user = await dbService.findUserById(session.userId);
-      if (user) userPoints = user.pointsBalance;
+      userPointsPromise = dbService
+        .findUserById(session.userId)
+        .then((user) => user?.pointsBalance || 0);
     }
 
-    return NextResponse.json({
-      success: true,
-      rewards: rewards.map((r) => ({
-        ...r,
-        canRedeem: userPoints >= r.pointsRequired,
-      })),
-      userPoints,
-    });
+    const [rewards, userPoints] = await Promise.all([
+      rewardsPromise,
+      userPointsPromise,
+    ]);
+
+    return NextResponse.json(
+      {
+        success: true,
+        rewards: rewards.map((r) => ({
+          ...r,
+          canRedeem: userPoints >= r.pointsRequired,
+        })),
+        userPoints,
+      },
+      {
+        headers: {
+          "Cache-Control": "private, max-age=15, stale-while-revalidate=60",
+        },
+      }
+    );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

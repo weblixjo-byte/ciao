@@ -137,3 +137,31 @@ h1, h2, h3, h4, h5, h6, .font-brand, .font-subbrand {
 ::-webkit-scrollbar-thumb:hover {
   background: #36543D;
 }
+
+/* Smooth 3-Dots Brand Wave Animation */
+@keyframes brandWaveBounce {
+  0%, 100% {
+    transform: translateY(0) scale(0.75);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-8px) scale(1.15);
+    opacity: 1;
+    filter: drop-shadow(0 3px 6px rgba(54, 84, 61, 0.3));
+  }
+}
+
+.animate-brand-dot-1 {
+  animation: brandWaveBounce 1.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation-delay: 0s;
+}
+
+.animate-brand-dot-2 {
+  animation: brandWaveBounce 1.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation-delay: 0.18s;
+}
+
+.animate-brand-dot-3 {
+  animation: brandWaveBounce 1.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation-delay: 0.36s;
+}

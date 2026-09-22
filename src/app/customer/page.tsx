@@ -101,6 +101,7 @@ const CUSTOMER_CACHE_KEY = "ciao_customer_cached";
 const CUSTOMER_ID_KEY = "ciao_customer_id";
 const CUSTOMER_TOKEN_KEY = "ciao_customer_token";
 const TRANSACTIONS_CACHE_KEY = "ciao_transactions_cached";
+const REWARDS_CACHE_KEY = "ciao_rewards_cached";
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -190,7 +191,29 @@ export default function CustomerPage() {
   });
 
   const [transactions, setTransactions] = useState<TransactionItem[]>([]);
-  const [rewards, setRewards] = useState<RewardItem[]>([]);
+  const [rewards, setRewards] = useState<RewardItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem(REWARDS_CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {
+        console.warn("Failed to load rewards from local cache", e);
+      }
+    }
+    return [];
+  });
+  const [loadingRewards, setLoadingRewards] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem(REWARDS_CACHE_KEY);
+        if (cached && JSON.parse(cached).length > 0) return false;
+      } catch (e) {}
+    }
+    return true;
+  });
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [activeTab, setActiveTab] = useState<"card" | "rewards" | "history" | "notifications">("card");
 
@@ -399,17 +422,27 @@ export default function CustomerPage() {
   // Fetch Rewards
   const loadRewards = async () => {
     try {
+      if (rewards.length === 0) {
+        setLoadingRewards(true);
+      }
       const headers = getAuthHeaders();
       const res = await fetch("/api/customer/rewards", {
         headers,
         credentials: "include",
       });
       const data = await res.json();
-      if (data.success) {
-        setRewards(data.rewards || []);
+      if (data.success && Array.isArray(data.rewards)) {
+        setRewards(data.rewards);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(REWARDS_CACHE_KEY, JSON.stringify(data.rewards));
+          } catch (e) {}
+        }
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoadingRewards(false);
     }
   };
 
@@ -537,10 +570,20 @@ export default function CustomerPage() {
       if (typeof window !== "undefined") {
         const cachedCustomer = localStorage.getItem(CUSTOMER_CACHE_KEY);
         const cachedTxs = localStorage.getItem(TRANSACTIONS_CACHE_KEY);
+        const cachedRewards = localStorage.getItem(REWARDS_CACHE_KEY);
         if (cachedCustomer) {
           setCustomer(JSON.parse(cachedCustomer));
           if (cachedTxs) setTransactions(JSON.parse(cachedTxs));
           setLoading(false);
+        }
+        if (cachedRewards) {
+          try {
+            const parsed = JSON.parse(cachedRewards);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setRewards(parsed);
+              setLoadingRewards(false);
+            }
+          } catch (e) {}
         }
       }
     } catch (e) {
@@ -845,6 +888,7 @@ export default function CustomerPage() {
       localStorage.removeItem(CUSTOMER_ID_KEY);
       localStorage.removeItem(CUSTOMER_TOKEN_KEY);
       localStorage.removeItem(TRANSACTIONS_CACHE_KEY);
+      localStorage.removeItem(REWARDS_CACHE_KEY);
     }
     setCustomer(null);
     setActiveTab("card");
@@ -1283,7 +1327,15 @@ export default function CustomerPage() {
                     Rewards Status
                   </span>
                   <span className="inline-block px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-100 text-xs font-bold text-[#36543D] font-sans">
-                    {rewards.filter((r) => r.canRedeem).length} Unlocked
+                    {loadingRewards && rewards.length === 0 ? (
+                      <span className="inline-flex items-center gap-1 py-0.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#36543D] animate-brand-dot-1 inline-block" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#36543D] animate-brand-dot-2 inline-block" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#36543D] animate-brand-dot-3 inline-block" />
+                      </span>
+                    ) : (
+                      `${rewards.filter((r) => r.canRedeem).length} Unlocked`
+                    )}
                   </span>
                 </div>
               </div>
@@ -1303,7 +1355,16 @@ export default function CustomerPage() {
                     Redeem Rewards & Dishes
                   </span>
                   <span className="text-xs text-neutral-500">
-                    {rewards.filter((r) => r.canRedeem).length} rewards currently available with your balance
+                    {loadingRewards && rewards.length === 0 ? (
+                      <span className="inline-flex items-center gap-1.5 text-[#36543D] font-medium">
+                        <span className="w-1 h-1 rounded-full bg-[#36543D] animate-brand-dot-1 inline-block" />
+                        <span className="w-1 h-1 rounded-full bg-[#36543D] animate-brand-dot-2 inline-block" />
+                        <span className="w-1 h-1 rounded-full bg-[#36543D] animate-brand-dot-3 inline-block" />
+                        <span>Loading rewards...</span>
+                      </span>
+                    ) : (
+                      `${rewards.filter((r) => r.canRedeem).length} rewards currently available with your balance`
+                    )}
                   </span>
                 </div>
               </div>
@@ -1326,16 +1387,41 @@ export default function CustomerPage() {
                   <span className="text-xs font-normal text-neutral-500 font-sans">pts</span>
                 </span>
               </div>
-              <div className="text-end">
+              <div className="text-end flex items-center gap-2">
+                {loadingRewards && rewards.length > 0 && (
+                  <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100" title="Syncing rewards...">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#36543D] animate-brand-dot-1 inline-block" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#36543D] animate-brand-dot-2 inline-block" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#36543D] animate-brand-dot-3 inline-block" />
+                  </div>
+                )}
                 <span className="text-xs text-[#36543D] font-semibold bg-emerald-50/80 border border-emerald-200 px-3 py-1 rounded-full block font-sans">
                   Redeemable in Store
                 </span>
               </div>
             </div>
 
-            {/* Rewards Cards Stack */}
-            <div className="space-y-4">
-              {rewards.map((reward) => {
+            {/* Rewards Cards Stack or 3-Dots Smooth Loader */}
+            {loadingRewards && rewards.length === 0 ? (
+              <div className="bg-white/80 backdrop-blur-xs border border-neutral-200/80 rounded-3xl py-24 px-6 flex flex-col items-center justify-center shadow-xs">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="w-3.5 h-3.5 rounded-full bg-[#36543D] animate-brand-dot-1 inline-block" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-[#36543D] animate-brand-dot-2 inline-block" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-[#36543D] animate-brand-dot-3 inline-block" />
+                </div>
+              </div>
+            ) : rewards.length === 0 ? (
+              <div className="bg-white border border-neutral-200 rounded-3xl p-8 text-center shadow-xs">
+                <div className="w-12 h-12 rounded-full bg-emerald-50 text-[#36543D] flex items-center justify-center mx-auto mb-3">
+                  <Gift className="w-6 h-6" />
+                </div>
+                <p className="text-xs text-neutral-500 font-sans">
+                  No rewards available right now. Check back soon!
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {rewards.map((reward) => {
                 const canAfford = customer.pointsBalance >= reward.pointsRequired;
                 const progressPercent = Math.min(
                   100,
@@ -1424,8 +1510,9 @@ export default function CustomerPage() {
                 );
               })}
             </div>
-          </div>
-        )}
+          )}
+        </div>
+      )}
 
         {/* TAB 3: TRANSACTION LEDGER */}
         {activeTab === "history" && (

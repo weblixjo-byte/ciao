@@ -21,6 +21,8 @@ const RewardSchema = new Schema<RewardDocument>(
   { timestamps: true }
 );
 
+RewardSchema.index({ isActive: 1, pointsRequired: 1 });
+
 // Clear model cache in dev/reload to ensure updated schema is applied
 if (mongoose.models && mongoose.models.Reward) {
   delete mongoose.models.Reward;
