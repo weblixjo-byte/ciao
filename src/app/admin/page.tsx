@@ -24,9 +24,11 @@ import {
   Camera,
   Smartphone,
   Bell,
+  LifeBuoy,
 } from "lucide-react";
 import { IReward, IUser, ITransaction } from "@/lib/types";
 import CustomGlassSelect from "@/components/CustomGlassSelect";
+import SupportTicketView from "@/components/SupportTicketView";
 
 // Bilingual Dictionary for Admin Console
 const i18n = {
@@ -47,6 +49,7 @@ const i18n = {
     navRewards: "Rewards Catalogue",
     navCashiers: "POS Cashiers",
     navBroadcast: "Notifications",
+    navSupport: "Support Ticket",
     signOut: "Sign Out",
     home: "Cashier POS",
     analyticsTitle: "Executive Analytics & Metrics",
@@ -150,6 +153,7 @@ const i18n = {
     navRewards: "Rewards Catalogue",
     navCashiers: "POS Cashiers",
     navBroadcast: "Notifications",
+    navSupport: "Support Ticket",
     signOut: "Sign Out",
     home: "Cashier POS",
     analyticsTitle: "Executive Analytics & Metrics",
@@ -285,7 +289,7 @@ export default function AdminPage() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<"analytics" | "customers" | "rewards" | "cashiers" | "broadcast">("analytics");
+  const [activeTab, setActiveTab] = useState<"analytics" | "customers" | "rewards" | "cashiers" | "broadcast" | "support">("analytics");
 
   // Customer Directory State
   const [customerSearchQuery, setCustomerSearchQuery] = useState("");
@@ -860,6 +864,7 @@ export default function AdminPage() {
     { id: "rewards", label: t.navRewards, icon: Gift },
     { id: "cashiers", label: t.navCashiers, icon: ShieldCheck },
     { id: "broadcast", label: t.navBroadcast, icon: Send },
+    { id: "support", label: t.navSupport, icon: LifeBuoy },
   ] as const;
 
   // Super Admin Layout (100% English, Centered & Balanced Layout)
@@ -886,6 +891,20 @@ export default function AdminPage() {
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => setActiveTab("support")}
+              className={`px-2.5 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs ${
+                activeTab === "support"
+                  ? "bg-[#36543D] text-white border-[#36543D]"
+                  : "border-emerald-200 bg-emerald-50/90 hover:bg-emerald-100 text-[#36543D]"
+              }`}
+              title="Support & Incident Ticket"
+            >
+              <LifeBuoy className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Support</span>
+            </button>
+
             <Link
               href="/cashier"
               title={t.openCashier}
@@ -983,6 +1002,23 @@ export default function AdminPage() {
 
         {/* Sidebar Footer */}
         <div className="pt-4 border-t border-[#dce5dd]/60 space-y-3">
+          {/* Quick Persistent Support Ticket Action Button */}
+          <button
+            type="button"
+            onClick={() => setActiveTab("support")}
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+              activeTab === "support"
+                ? "bg-[#36543D] text-white border-[#36543D] shadow-xs"
+                : "bg-emerald-50/70 hover:bg-emerald-100/70 border-emerald-200/70 text-[#36543D]"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <LifeBuoy className="w-4 h-4" />
+              <span>Support & Incidents</span>
+            </div>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          </button>
+
           <div className="px-2">
             <span className="text-xs font-semibold text-neutral-900 block truncate">
               {admin.name}
@@ -1721,6 +1757,15 @@ export default function AdminPage() {
               </div>
             </form>
           </div>
+        )}
+
+        {/* TAB 6: SUPPORT & INCIDENT TICKET SYSTEM */}
+        {activeTab === "support" && (
+          <SupportTicketView
+            adminName={admin.name}
+            adminEmail={admin.email}
+            onReturnToDashboard={() => setActiveTab("analytics")}
+          />
         )}
       </main>
 
