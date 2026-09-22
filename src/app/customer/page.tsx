@@ -1734,13 +1734,9 @@ export default function CustomerPage() {
                 Give this 8-Digit Code to Cashier
               </span>
               <div className="flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto py-1">
-                <div className="flex items-center justify-center gap-1 sm:gap-1.5 font-pin whitespace-nowrap text-xl sm:text-2xl font-bold tracking-wider text-[#36543D] select-all">
-                  <span>{customer.formattedPin}</span>
-                  <span className="text-neutral-400 font-normal">-</span>
-                  <span className="bg-[#36543D] text-[#F4EECF] px-2 sm:px-2.5 py-0.5 rounded-lg font-mono font-black text-lg sm:text-xl shadow-xs">
-                    {redeemingReward.claimCode || "10"}
-                  </span>
-                </div>
+                <span className="font-pin text-2xl sm:text-3xl font-bold tracking-widest text-[#36543D] select-all whitespace-nowrap">
+                  {customer.formattedPin} - {redeemingReward.claimCode || "10"}
+                </span>
                 <button
                   onClick={handleCopyRedemptionCode}
                   className="p-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-emerald-50 text-neutral-600 transition-colors active:scale-95 cursor-pointer shrink-0"

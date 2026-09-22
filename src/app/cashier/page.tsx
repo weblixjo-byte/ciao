@@ -659,14 +659,13 @@ export default function CashierPage() {
             {activeMode === "pin" && (
               <div className="glass-panel rounded-3xl p-4 sm:p-5 shadow-lg space-y-4">
                 <div className="text-center">
-                  <div className="flex items-center justify-between text-[11px] font-semibold text-neutral-500 mb-1.5 px-1 font-sans">
-                    <span>6-Digit PIN (Earn)</span>
-                    <span>2-Digit Reward (Redeem)</span>
-                  </div>
+                  <span className="text-xs font-semibold text-neutral-500 block mb-1.5 font-sans">
+                    Enter Customer PIN (6 Digits) or Redemption Code (8 Digits)
+                  </span>
 
                   {/* 8 Digit Display Boxes: [•][•][•] [•][•][•] - [•][•] */}
                   <div className="flex items-center justify-center gap-1 sm:gap-2 my-2 dir-ltr">
-                    {/* First 3 PIN digits */}
+                    {/* First 3 digits */}
                     <div className="flex gap-1">
                       {[0, 1, 2].map((idx) => {
                         const char = pinQuery[idx];
@@ -687,7 +686,7 @@ export default function CashierPage() {
                       })}
                     </div>
 
-                    {/* Second 3 PIN digits */}
+                    {/* Second 3 digits */}
                     <div className="flex gap-1">
                       {[3, 4, 5].map((idx) => {
                         const char = pinQuery[idx];
@@ -711,7 +710,7 @@ export default function CashierPage() {
                     {/* Separator */}
                     <span className="text-neutral-400 font-bold text-base px-0.5">-</span>
 
-                    {/* 2 digits for Reward Claim Code */}
+                    {/* Last 2 digits */}
                     <div className="flex gap-1">
                       {[6, 7].map((idx) => {
                         const char = pinQuery[idx];
@@ -720,10 +719,10 @@ export default function CashierPage() {
                             key={idx}
                             className={`w-9 h-11 sm:w-10 sm:h-13 rounded-xl border-2 flex items-center justify-center text-lg sm:text-xl font-bold font-mono transition-all ${
                               char
-                                ? "border-[#36543D] bg-[#36543D] text-[#F4EECF] shadow-2xs"
+                                ? "border-[#36543D] bg-emerald-50 text-[#36543D]"
                                 : idx === pinQuery.length
                                 ? "border-[#36543D] bg-white animate-pulse"
-                                : "border-dashed border-neutral-300 bg-neutral-50/50 text-neutral-300"
+                                : "border-neutral-200 bg-neutral-50/50 text-neutral-300"
                             }`}
                           >
                             {char || "•"}
